@@ -15,7 +15,12 @@ public class MainActivity extends AppCompatActivity {
     private String MSG = "MIC";
     private TextView amplitude;
 
-    public void getstart(View view){
+    public void startMic(View view){
+        /**
+         *  Function called when Start Button Pressed
+         *  purpose: create an instance of MIC if not created yet
+         */
+
         if(mediaRecorder == null){
             mediaRecorder = new MediaRecorder();
             mediaRecorder.reset();
@@ -36,7 +41,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void stop(View view) {
+    public void stopMic(View view) {
+        /**
+         *  Function called when Stop Button Pressed
+         *  purpose: delete the instance of MIC if created
+         */
         if (mediaRecorder != null) {
             mediaRecorder.stop();
             mediaRecorder.release();
@@ -48,14 +57,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getAmplitude(View view) {
+        /**
+         *  Function called when Amplitude Button Pressed
+         *  purpose: shows current amplitude
+         */
         if (mediaRecorder != null) {
 //            mediaRecorder
             String y = mediaRecorder.getMaxAmplitude() +"";
-            double x = 20*Math.log10(mediaRecorder.getMaxAmplitude()/600);
+//            double x = 20*Math.log10(mediaRecorder.getMaxAmplitude()/600);
 //            String x =  + "";
 
             amplitude.setText(y);
-            Log.d(MSG, "======================"+ y+"========="+x);
+            Log.d(MSG, "===================== Amplitude got is = "+ y);
         }
         else
         {
