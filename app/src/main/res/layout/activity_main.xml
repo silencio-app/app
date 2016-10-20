@@ -14,4 +14,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="START"
+        android:id="@+id/button"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="56dp"
+        android:onClick="getstart"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AMPLITUDE"
+        android:id="@+id/button2"
+        android:layout_alignBottom="@+id/button"
+        android:layout_toEndOf="@+id/button"
+        android:layout_marginStart="59dp"
+        android:onClick="getAmplitude"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="STOP"
+        android:id="@+id/button3"
+        android:layout_below="@+id/button2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp"
+        android:onClick="stop"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="NULL"
+        android:id="@+id/amp"
+        android:layout_below="@+id/button3"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="67dp" />
 </RelativeLayout>
