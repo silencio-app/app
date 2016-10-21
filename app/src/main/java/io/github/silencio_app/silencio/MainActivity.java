@@ -10,10 +10,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.IOException;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
     private String MSG = "MIC";
     private TextView amplitude;
     private boolean recording_flag = false;
+    private LineGraphSeries<DataPoint> series;
+    private static final Random RANDOM = new Random();
+    private int lastX = 0;
 
     public void getstart(View view){
         if(mediaRecorder == null){
@@ -67,23 +72,50 @@ public class MainActivity extends AppCompatActivity {
 
         amplitude = (TextView)findViewById(R.id.amp);
         GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3)
-        });
+        series = new LineGraphSeries<>();
         graph.addSeries(series);
+        Viewport viewport = graph.getViewport();
+        viewport.setYAxisBoundsManual(true);
+        viewport.setMinY(0);
+        viewport.setMaxY(32768);
+        viewport.setMaxX(10);
+        viewport.setScalable(true);
+    }
+//    @Override
+//    protected void onResume(){
+//        super.onResume();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                for (int i=0;i<100;i++){
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            addEntry();
+//                        }
+//                    });
+//                    try {
+//                        Thread.sleep(600);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }).start();
+//    }
+    private void addEntry() {
+        series.appendData(new DataPoint(lastX++, RANDOM.nextDouble()*10d), true, 10);
     }
 
     private class AudioListener implements Runnable{
-        public String getAmplitude() {
+        public int getAmplitude() {
             if (mediaRecorder != null) {
-                String y = mediaRecorder.getMaxAmplitude() +"";
+                int y = mediaRecorder.getMaxAmplitude();
                 return y;
             }
             else
             {
-                return null;
+                return -1;
             }
         }
         private String MSG = "AudioListener Class LOG: ";
@@ -94,11 +126,13 @@ public class MainActivity extends AppCompatActivity {
         public void run(){
             android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             while(recording_flag){
-                final String y = getAmplitude();
+                final int y = getAmplitude();
+                final String x = y+"";
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        amplitude.setText(y);
+                        amplitude.setText(x);
+                        series.appendData(new DataPoint(lastX++, y), true, 32768);
                     }
                 });
                 Log.d(MSG, " ========  got amplitude "+ y);
