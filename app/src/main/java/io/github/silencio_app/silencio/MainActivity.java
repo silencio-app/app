@@ -6,14 +6,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
     private MediaRecorder mediaRecorder = null;
-    private String MSG = "MIC";
+    private String MSG = "SILENCIO LOG: ";
     private TextView amplitude;
+    private boolean recordFlag = false;
 
     public void startMic(View view){
         /**
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
             try{
                 mediaRecorder.prepare();
                 mediaRecorder.start();
+                recordFlag = true;
             }
             catch (IOException e){
                 Log.d(MSG, "================== EXCEPTION ================");
@@ -50,29 +54,45 @@ public class MainActivity extends AppCompatActivity {
             mediaRecorder.stop();
             mediaRecorder.release();
             mediaRecorder = null;
+            recordFlag = false;
         }
         else{
             Log.d(MSG, "================== NO MIC LOCKED ================");
         }
     }
-
-    public void getAmplitude(View view) {
+    public void showData(View view) throws InterruptedException {
+        while(recordFlag){
+            double value = getAmplitude();
+            if(value == -1){
+                Toast.makeText(getApplicationContext(), "Please Start MIC first", Toast.LENGTH_SHORT).show();
+                recordFlag = false;
+                Log.d(MSG, "================== MIC not started yet ================");
+                break;
+            }
+            else{
+                String val = value + "";
+                amplitude.setText(val);
+                Log.d(MSG, "================== "+ val +" ================");
+                TimeUnit.SECONDS.sleep(1);
+            }
+        }
+    }
+    public double getAmplitude(){
         /**
-         *  Function called when Amplitude Button Pressed
-         *  purpose: shows current amplitude
+         *  Function called every 1 sec to fetch current Amplitude
+         *  purpose: return current amplitude
          */
-        if (mediaRecorder != null) {
-//            mediaRecorder
-            String y = mediaRecorder.getMaxAmplitude() +"";
-//            double x = 20*Math.log10(mediaRecorder.getMaxAmplitude()/600);
-//            String x =  + "";
 
-            amplitude.setText(y);
-            Log.d(MSG, "===================== Amplitude got is = "+ y);
+        if (mediaRecorder != null) {
+            double y = mediaRecorder.getMaxAmplitude();
+            /*double x = 20*Math.log10(mediaRecorder.getMaxAmplitude()/600);
+            String x =  + "";*/
+            return y;
+
         }
         else
         {
-            Log.d(MSG, "================== NULL ================");
+            return -1;
         }
     }
 

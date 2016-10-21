@@ -31,7 +31,7 @@
         android:layout_alignBottom="@+id/button"
         android:layout_toEndOf="@+id/button"
         android:layout_marginStart="59dp"
-        android:onClick="getAmplitude"/>
+        android:onClick="showData"/>
 
     <Button
         android:layout_width="wrap_content"
