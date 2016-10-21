@@ -1,13 +1,14 @@
 package io.github.silencio_app.silencio;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.media.MediaRecorder;
-import android.os.Process;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
@@ -15,7 +16,6 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +36,23 @@ public class MainActivity extends AppCompatActivity {
         /**
          * start the MIC if mediaRecorder instance is created else Pops up a message
          */
+        // previously invisible view
+        View myView = findViewById(R.id.graph);
+
+        // get the center for the clipping circle
+        int cx = myView.getWidth() / 2;
+        int cy = myView.getHeight() / 2;
+
+        // get the final radius for the clipping circle
+        float finalRadius = (float) Math.hypot(cx, cy);
+
+        // create the animator for this view (the start radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+
+        // make the view visible and start the animation
+        myView.setVisibility(View.VISIBLE);
+        anim.start();
 
         if(mediaRecorder == null){
             mediaRecorder = new MediaRecorder();
@@ -63,6 +80,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void stopMIC(View view) {
+
+        // previously visible view
+        final View myView = findViewById(R.id.graph);
+
+        // get the center for the clipping circle
+        int cx = myView.getWidth() / 2;
+        int cy = myView.getHeight() / 2;
+
+        // get the initial radius for the clipping circle
+        float initialRadius = (float) Math.hypot(cx, cy);
+
+        // create the animation (the final radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
+
+        // make the view invisible when the animation is done
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                myView.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        // start the animation
+        anim.start();
+
         if (mediaRecorder != null) {
             mediaRecorder.stop();
             mediaRecorder.release();
