@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
          */
 
         if (isStarted == false) {
+            View tview = findViewById(R.id.amp);
+            tview.setVisibility(View.VISIBLE);
+
             // previously invisible view
             View myView = findViewById(R.id.graph);
 
@@ -87,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
     public void stopMIC(View view) {
 
         if (isStarted == true) {
+            View tview = findViewById(R.id.amp);
+            tview.setVisibility(View.INVISIBLE);
+
             // previously visible view
             final View myView = findViewById(R.id.graph);
 
