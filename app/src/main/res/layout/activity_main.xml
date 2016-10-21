@@ -42,5 +42,6 @@
         android:layout_height="200dip"
         android:id="@+id/graph"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:visibility="invisible" />
 </RelativeLayout>
