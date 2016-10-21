@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean recording_flag = false; // Boolean to check if graph has to be plot or not
     private LineGraphSeries<DataPoint> series;
     private int lastX = 0;  // Pointer for plotting the amplitude
+    private double amp_ref = 3.27;
 
     /**
      * Function called when start button is pressed
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         Viewport viewport = graph.getViewport();
         viewport.setYAxisBoundsManual(true);
         viewport.setMinY(0);  // min value is 0
-        viewport.setMaxY(32768);  // max value is 32768
+        viewport.setMaxY(100);  // max value is 32768
         viewport.setMaxX(10);  // 10 units frame
         viewport.setScalable(true); // auto scroll to right
     }
@@ -103,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
          */
         public int getAmplitude() {
             if (mediaRecorder != null) {
-                int y = mediaRecorder.getMaxAmplitude();
-                return y;
+                double y =  20*Math.log10(mediaRecorder.getMaxAmplitude()/amp_ref);
+                return (int)y;
             }
             else
             {
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         public void run(){
-            
+
             // if recording flag is true then keep mapping graph
             while(recording_flag){
                 final int amp_val = getAmplitude();
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         amplitude.setText(amp_val_string);
-                        series.appendData(new DataPoint(lastX++, amp_val), true, 32768);
+                        series.appendData(new DataPoint(lastX++, amp_val), true, 100);
                     }
                 });
                 Log.d(MSG, " === AMPLITUDE === "+ amp_val_string);
