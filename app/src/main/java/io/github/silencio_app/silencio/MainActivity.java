@@ -1,6 +1,7 @@
 package io.github.silencio_app.silencio;
 
 import android.media.MediaRecorder;
+import android.os.Process;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,22 +9,21 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
     private MediaRecorder mediaRecorder = null;
-    private String MSG = "SILENCIO LOG: ";
+    private String MSG = "MIC";
     private TextView amplitude;
-    private boolean recordFlag = false;
+    private boolean recording_flag = false;
 
-    public void startMic(View view){
-        /**
-         *  Function called when Start Button Pressed
-         *  purpose: create an instance of MIC if not created yet
-         */
-
+    public void getstart(View view){
         if(mediaRecorder == null){
             mediaRecorder = new MediaRecorder();
             mediaRecorder.reset();
@@ -35,7 +35,10 @@ public class MainActivity extends AppCompatActivity {
             try{
                 mediaRecorder.prepare();
                 mediaRecorder.start();
-                recordFlag = true;
+                recording_flag = true;
+                Thread newT = new Thread(new AudioListener());
+                newT.start();
+
             }
             catch (IOException e){
                 Log.d(MSG, "================== EXCEPTION ================");
@@ -45,54 +48,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void stopMic(View view) {
-        /**
-         *  Function called when Stop Button Pressed
-         *  purpose: delete the instance of MIC if created
-         */
+    public void stop(View view) {
         if (mediaRecorder != null) {
             mediaRecorder.stop();
             mediaRecorder.release();
             mediaRecorder = null;
-            recordFlag = false;
+            recording_flag = false;
         }
         else{
             Log.d(MSG, "================== NO MIC LOCKED ================");
-        }
-    }
-    public void showData(View view) throws InterruptedException {
-        while(recordFlag){
-            double value = getAmplitude();
-            if(value == -1){
-                Toast.makeText(getApplicationContext(), "Please Start MIC first", Toast.LENGTH_SHORT).show();
-                recordFlag = false;
-                Log.d(MSG, "================== MIC not started yet ================");
-                break;
-            }
-            else{
-                String val = value + "";
-                amplitude.setText(val);
-                Log.d(MSG, "================== "+ val +" ================");
-                TimeUnit.SECONDS.sleep(1);
-            }
-        }
-    }
-    public double getAmplitude(){
-        /**
-         *  Function called every 1 sec to fetch current Amplitude
-         *  purpose: return current amplitude
-         */
-
-        if (mediaRecorder != null) {
-            double y = mediaRecorder.getMaxAmplitude();
-            /*double x = 20*Math.log10(mediaRecorder.getMaxAmplitude()/600);
-            String x =  + "";*/
-            return y;
-
-        }
-        else
-        {
-            return -1;
         }
     }
 
@@ -102,5 +66,48 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         amplitude = (TextView)findViewById(R.id.amp);
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(0, 1),
+                new DataPoint(1, 5),
+                new DataPoint(2, 3)
+        });
+        graph.addSeries(series);
+    }
+
+    private class AudioListener implements Runnable{
+        public String getAmplitude() {
+            if (mediaRecorder != null) {
+                String y = mediaRecorder.getMaxAmplitude() +"";
+                return y;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        private String MSG = "AudioListener Class LOG: ";
+        /*
+
+         */
+        @Override
+        public void run(){
+            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            while(recording_flag){
+                final String y = getAmplitude();
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        amplitude.setText(y);
+                    }
+                });
+                Log.d(MSG, " ========  got amplitude "+ y);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

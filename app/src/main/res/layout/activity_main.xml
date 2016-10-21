@@ -10,10 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="io.github.silencio_app.silencio.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,27 +17,16 @@
         android:id="@+id/button"
         android:layout_alignParentStart="true"
         android:layout_marginTop="56dp"
-        android:onClick="startMic"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="AMPLITUDE"
-        android:id="@+id/button2"
-        android:layout_alignBottom="@+id/button"
-        android:layout_toEndOf="@+id/button"
-        android:layout_marginStart="59dp"
-        android:onClick="showData"/>
+        android:onClick="getstart"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="STOP"
         android:id="@+id/button3"
-        android:layout_below="@+id/button2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="44dp"
-        android:onClick="stopMic"/>
+        android:onClick="stop"
+        android:layout_alignTop="@+id/button"
+        android:layout_alignEnd="@+id/graph" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -52,4 +37,10 @@
         android:layout_below="@+id/button3"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="67dp" />
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
+        android:id="@+id/graph"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
