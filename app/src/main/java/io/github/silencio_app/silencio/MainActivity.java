@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private LineGraphSeries<DataPoint> series;
     private int lastX = 0;  // Pointer for plotting the amplitude
     private double amp_ref = 3.27;
-
+    private boolean isStarted = false;
     /**
      * Function called when start button is pressed
      * @param view
@@ -36,23 +36,28 @@ public class MainActivity extends AppCompatActivity {
         /**
          * start the MIC if mediaRecorder instance is created else Pops up a message
          */
-        // previously invisible view
-        View myView = findViewById(R.id.graph);
 
-        // get the center for the clipping circle
-        int cx = myView.getWidth() / 2;
-        int cy = myView.getHeight() / 2;
+        if (isStarted == false) {
+            // previously invisible view
+            View myView = findViewById(R.id.graph);
 
-        // get the final radius for the clipping circle
-        float finalRadius = (float) Math.hypot(cx, cy);
+            // get the center for the clipping circle
+            int cx = myView.getWidth() / 2;
+            int cy = myView.getHeight() / 2;
 
-        // create the animator for this view (the start radius is zero)
-        Animator anim =
-                ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+            // get the final radius for the clipping circle
+            float finalRadius = (float) Math.hypot(cx, cy);
 
-        // make the view visible and start the animation
-        myView.setVisibility(View.VISIBLE);
-        anim.start();
+            // create the animator for this view (the start radius is zero)
+            Animator anim =
+                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+
+            // make the view visible and start the animation
+            myView.setVisibility(View.VISIBLE);
+            anim.start();
+
+            isStarted = true;
+        }
 
         if(mediaRecorder == null){
             mediaRecorder = new MediaRecorder();
@@ -81,31 +86,35 @@ public class MainActivity extends AppCompatActivity {
 
     public void stopMIC(View view) {
 
-        // previously visible view
-        final View myView = findViewById(R.id.graph);
+        if (isStarted == true) {
+            // previously visible view
+            final View myView = findViewById(R.id.graph);
 
-        // get the center for the clipping circle
-        int cx = myView.getWidth() / 2;
-        int cy = myView.getHeight() / 2;
+            // get the center for the clipping circle
+            int cx = myView.getWidth() / 2;
+            int cy = myView.getHeight() / 2;
 
-        // get the initial radius for the clipping circle
-        float initialRadius = (float) Math.hypot(cx, cy);
+            // get the initial radius for the clipping circle
+            float initialRadius = (float) Math.hypot(cx, cy);
 
-        // create the animation (the final radius is zero)
-        Animator anim =
-                ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
+            // create the animation (the final radius is zero)
+            Animator anim =
+                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
 
-        // make the view invisible when the animation is done
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                myView.setVisibility(View.INVISIBLE);
-            }
-        });
+            // make the view invisible when the animation is done
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    myView.setVisibility(View.INVISIBLE);
+                }
+            });
 
-        // start the animation
-        anim.start();
+            // start the animation
+            anim.start();
+
+            isStarted = false;
+        }
 
         if (mediaRecorder != null) {
             mediaRecorder.stop();
