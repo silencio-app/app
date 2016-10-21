@@ -20,7 +20,7 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
 
     private MediaRecorder mediaRecorder = null;
-    private String MSG = "Main Thread Logging header";
+    private String MSG = "Main Thread Logging";
     private TextView amplitude; // TextFiled for showing textual reading
     private boolean recording_flag = false; // Boolean to check if graph has to be plot or not
     private LineGraphSeries<DataPoint> series;
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
      * private class for fetching amplitude and mapping graph
      */
     private class AudioListener implements Runnable{
-        private String MSG = "AudioListener Thread Logging header : ";
+        private String MSG = "AudioListener Logging: ";
         /**
          * @return current amplitude if instance of MIC exist
          */
