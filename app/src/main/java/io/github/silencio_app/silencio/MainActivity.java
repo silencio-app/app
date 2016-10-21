@@ -15,33 +15,41 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.IOException;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
     private MediaRecorder mediaRecorder = null;
-    private String MSG = "MIC";
-    private TextView amplitude;
-    private boolean recording_flag = false;
+    private String MSG = "Main Thread Logging header";
+    private TextView amplitude; // TextFiled for showing textual reading
+    private boolean recording_flag = false; // Boolean to check if graph has to be plot or not
     private LineGraphSeries<DataPoint> series;
-    private static final Random RANDOM = new Random();
-    private int lastX = 0;
+    private int lastX = 0;  // Pointer for plotting the amplitude
 
-    public void getstart(View view){
+    /**
+     * Function called when start button is pressed
+     * @param view
+     */
+    public void startMIC(View view){
+
+        /**
+         * start the MIC if mediaRecorder instance is created else Pops up a message
+         */
+
         if(mediaRecorder == null){
             mediaRecorder = new MediaRecorder();
             mediaRecorder.reset();
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mediaRecorder.setOutputFile("/dev/null");
+            mediaRecorder.setOutputFile("/dev/null"); // Not saving the audio
 
             try{
                 mediaRecorder.prepare();
                 mediaRecorder.start();
                 recording_flag = true;
-                Thread newT = new Thread(new AudioListener());
+
+                Thread newT = new Thread(new AudioListener());  // New Thread is created to handle the amplitude fetching and plotting graph
                 newT.start();
 
             }
@@ -53,12 +61,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void stop(View view) {
+    public void stopMIC(View view) {
         if (mediaRecorder != null) {
             mediaRecorder.stop();
             mediaRecorder.release();
             mediaRecorder = null;
-            recording_flag = false;
+            recording_flag = false; //reset the flag
         }
         else{
             Log.d(MSG, "================== NO MIC LOCKED ================");
@@ -71,43 +79,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         amplitude = (TextView)findViewById(R.id.amp);
+        /**
+         *  Initialising the empty graph
+         */
         GraphView graph = (GraphView) findViewById(R.id.graph);
         series = new LineGraphSeries<>();
         graph.addSeries(series);
         Viewport viewport = graph.getViewport();
         viewport.setYAxisBoundsManual(true);
-        viewport.setMinY(0);
-        viewport.setMaxY(32768);
-        viewport.setMaxX(10);
-        viewport.setScalable(true);
-    }
-//    @Override
-//    protected void onResume(){
-//        super.onResume();
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                for (int i=0;i<100;i++){
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            addEntry();
-//                        }
-//                    });
-//                    try {
-//                        Thread.sleep(600);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }).start();
-//    }
-    private void addEntry() {
-        series.appendData(new DataPoint(lastX++, RANDOM.nextDouble()*10d), true, 10);
+        viewport.setMinY(0);  // min value is 0
+        viewport.setMaxY(32768);  // max value is 32768
+        viewport.setMaxX(10);  // 10 units frame
+        viewport.setScalable(true); // auto scroll to right
     }
 
+    /**
+     * private class for fetching amplitude and mapping graph
+     */
     private class AudioListener implements Runnable{
+        private String MSG = "AudioListener Thread Logging header : ";
+        /**
+         * @return current amplitude if instance of MIC exist
+         */
         public int getAmplitude() {
             if (mediaRecorder != null) {
                 int y = mediaRecorder.getMaxAmplitude();
@@ -118,25 +111,23 @@ public class MainActivity extends AppCompatActivity {
                 return -1;
             }
         }
-        private String MSG = "AudioListener Class LOG: ";
-        /*
-
-         */
         @Override
         public void run(){
-            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            
+            // if recording flag is true then keep mapping graph
             while(recording_flag){
-                final int y = getAmplitude();
-                final String x = y+"";
+                final int amp_val = getAmplitude();
+                final String amp_val_string = amp_val + "";
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        amplitude.setText(x);
-                        series.appendData(new DataPoint(lastX++, y), true, 32768);
+                        amplitude.setText(amp_val_string);
+                        series.appendData(new DataPoint(lastX++, amp_val), true, 32768);
                     }
                 });
-                Log.d(MSG, " ========  got amplitude "+ y);
+                Log.d(MSG, " === AMPLITUDE === "+ amp_val_string);
                 try {
+                    // Sleep for 600 ms for next value
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

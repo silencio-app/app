@@ -17,14 +17,14 @@
         android:id="@+id/button"
         android:layout_alignParentStart="true"
         android:layout_marginTop="56dp"
-        android:onClick="getstart"/>
+        android:onClick="startMIC"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="STOP"
         android:id="@+id/button3"
-        android:onClick="stop"
+        android:onClick="stopMIC"
         android:layout_alignTop="@+id/button"
         android:layout_alignEnd="@+id/graph" />
 
