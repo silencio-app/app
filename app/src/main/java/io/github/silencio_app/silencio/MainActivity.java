@@ -5,17 +5,14 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.pm.ActivityInfo;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -25,17 +22,17 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
 
     private MediaRecorder mediaRecorder = null;
-    private String MSG = "Main Thread Logging";
+    private final String MSG = "Main Thread Logging";
     private TextView amplitude; // TextFiled for showing textual reading
     private boolean recording_flag = false; // Boolean to check if graph has to be plot or not
     private LineGraphSeries<DataPoint> series;
     private int lastX = 0;  // Pointer for plotting the amplitude
-    private double amp_ref = 3.27;
+    private final double amp_ref = 3.27;
     private boolean isStarted = false;
-    private static String PREVIOUS_X = "Previous x axis point";
-    private static String PREVIOUS_dB = "Previous noted decibals ";
-    private int db_level;
-    private ProgressBar db_meter;
+    private static final String PREVIOUS_X = "Previous x axis point";
+    private static final String PREVIOUS_dB = "Previous noted decibals ";
+    private int db_level; // decibel levels
+    private ProgressBar db_meter; // decibel meter
     /**
      * Function called when start button is pressed
      * @param view
@@ -45,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         /**
          * start the MIC if mediaRecorder instance is created else Pops up a message
          */
-        if (isStarted == false) {
+        if (!isStarted) {
             // previously invisible view
             View myView = findViewById(R.id.graph);
 
@@ -60,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             Animator anim =
                     ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
 
-            // make the view visible and start the animation
+            // make the graph and meter visible and start the animation
             myView.setVisibility(View.VISIBLE);
             db_meter.setVisibility(View.VISIBLE);
             anim.start();
@@ -95,10 +92,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void stopMIC(View view) {
 
-        if (isStarted == true) {
-            db_meter.setVisibility(View.GONE);
+        if (isStarted) {
             TextView tview = (TextView) findViewById(R.id.amp);
-            tview.setText("Press START");
+            tview.setText(getString(R.string.press_start));
 
             // previously visible view
             final View myView = findViewById(R.id.graph);
@@ -118,7 +114,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
+                    // make graph and meter invisible
                     myView.setVisibility(View.INVISIBLE);
+                    db_meter.setVisibility(View.GONE);
                 }
             });
 
@@ -170,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
      * private class for fetching amplitude and mapping graph
      */
     private class AudioListener implements Runnable{
-        private String MSG = "AudioListener Logging: ";
+        private final String MSG = "AudioListener Logging: ";
         /**
          * @return current amplitude if instance of MIC exist
          */
@@ -204,6 +202,10 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         amplitude.setText(amp_val_string);
                         db_meter.setProgress(amp_val);
+
+                        /*
+                        Provide Style to meter according to decibel values
+                         */
                         if (amp_val <= 70){
                             db_meter.setProgressDrawable(getDrawable(R.drawable.greenprogress));
                         }
@@ -213,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
                         if (amp_val > 90){
                             db_meter.setProgressDrawable(getDrawable(R.drawable.redprogress));
                         }
-//                        db_meter.getSolidColor(getResources().getColor(R.color.colorAccent));
                         series.appendData(new DataPoint(lastX++, amp_val), true, 100);
                     }
                 });
