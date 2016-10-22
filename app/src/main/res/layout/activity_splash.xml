@@ -11,7 +11,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="io.github.silencio_app.silencio.SplashActivity"
-    >
+    android:background="?android:attr/colorPressedHighlight">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -19,5 +19,22 @@
         app:srcCompat="@drawable/web_hi_res_512"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/imageView2"/>
+        android:id="@+id/imageView2"
+        android:maxHeight="400px"
+        android:maxWidth="400px"/>
+
+    <TextView
+        android:text="Silencio"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textViewSilencio"
+        android:textSize="40sp"
+        android:textColor="@android:color/white"
+        android:shadowDx="10"
+        android:shadowDy="10"
+        android:shadowRadius="2"
+        android:shadowColor="@android:color/black"/>
 </RelativeLayout>
