@@ -1,13 +1,14 @@
 package io.github.silencio_app.silencio;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.media.MediaRecorder;
-import android.os.Process;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
@@ -15,18 +16,17 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
     private MediaRecorder mediaRecorder = null;
-    private String MSG = "Main Thread Logging header";
+    private String MSG = "Main Thread Logging";
     private TextView amplitude; // TextFiled for showing textual reading
     private boolean recording_flag = false; // Boolean to check if graph has to be plot or not
     private LineGraphSeries<DataPoint> series;
     private int lastX = 0;  // Pointer for plotting the amplitude
     private double amp_ref = 3.27;
-
+    private boolean isStarted = false;
     /**
      * Function called when start button is pressed
      * @param view
@@ -36,6 +36,28 @@ public class MainActivity extends AppCompatActivity {
         /**
          * start the MIC if mediaRecorder instance is created else Pops up a message
          */
+
+        if (isStarted == false) {
+            // previously invisible view
+            View myView = findViewById(R.id.graph);
+
+            // get the center for the clipping circle
+            int cx = myView.getWidth() / 2;
+            int cy = myView.getHeight() / 2;
+
+            // get the final radius for the clipping circle
+            float finalRadius = (float) Math.hypot(cx, cy);
+
+            // create the animator for this view (the start radius is zero)
+            Animator anim =
+                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+
+            // make the view visible and start the animation
+            myView.setVisibility(View.VISIBLE);
+            anim.start();
+
+            isStarted = true;
+        }
 
         if(mediaRecorder == null){
             mediaRecorder = new MediaRecorder();
@@ -63,6 +85,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void stopMIC(View view) {
+
+        if (isStarted == true) {
+            TextView tview = (TextView) findViewById(R.id.amp);
+            tview.setText("Press START to begin!");
+
+            // previously visible view
+            final View myView = findViewById(R.id.graph);
+
+            // get the center for the clipping circle
+            int cx = myView.getWidth() / 2;
+            int cy = myView.getHeight() / 2;
+
+            // get the initial radius for the clipping circle
+            float initialRadius = (float) Math.hypot(cx, cy);
+
+            // create the animation (the final radius is zero)
+            Animator anim =
+                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
+
+            // make the view invisible when the animation is done
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    myView.setVisibility(View.INVISIBLE);
+                }
+            });
+
+            // start the animation
+            anim.start();
+
+            isStarted = false;
+        }
+
         if (mediaRecorder != null) {
             mediaRecorder.stop();
             mediaRecorder.release();
@@ -98,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
      * private class for fetching amplitude and mapping graph
      */
     private class AudioListener implements Runnable{
-        private String MSG = "AudioListener Thread Logging header : ";
+        private String MSG = "AudioListener Logging: ";
         /**
          * @return current amplitude if instance of MIC exist
          */
@@ -118,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             // if recording flag is true then keep mapping graph
             while(recording_flag){
                 final int amp_val = getAmplitude();
-                final String amp_val_string = amp_val + "";
+                final String amp_val_string = amp_val + " dB";
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
