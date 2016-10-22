@@ -31,7 +31,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/textViewSilencio"
-        android:textSize="40sp"
+        android:textSize="60sp"
         android:textColor="@android:color/white"
         android:shadowDx="10"
         android:shadowDy="10"
