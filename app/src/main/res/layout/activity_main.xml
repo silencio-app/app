@@ -4,6 +4,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBackground"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -15,8 +16,12 @@
         android:layout_height="wrap_content"
         android:text="START"
         android:id="@+id/button"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="50dip"
+        android:layout_marginLeft="50dip"
         android:onClick="startMIC"/>
 
     <Button
@@ -25,24 +30,32 @@
         android:text="STOP"
         android:id="@+id/button3"
         android:onClick="stopMIC"
-        android:layout_alignTop="@+id/button"
-        android:layout_alignEnd="@+id/graph" />
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:layout_alignLeft="@+id/button"
+        android:layout_alignEnd="@+id/graph"
+        android:layout_marginTop="50dip"
+        android:layout_marginRight="50dip" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="NULL"
+        android:text="Press START to begin!"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
         android:id="@+id/amp"
         android:layout_below="@+id/button3"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="67dp"
-        android:visibility="invisible" />
+        android:layout_marginTop="67dp" />
+
     <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
         android:layout_height="200dip"
         android:id="@+id/graph"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:background="@android:color/white"
         android:visibility="invisible" />
 </RelativeLayout>

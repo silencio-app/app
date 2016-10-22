@@ -38,9 +38,6 @@ public class MainActivity extends AppCompatActivity {
          */
 
         if (isStarted == false) {
-            View tview = findViewById(R.id.amp);
-            tview.setVisibility(View.VISIBLE);
-
             // previously invisible view
             View myView = findViewById(R.id.graph);
 
@@ -90,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
     public void stopMIC(View view) {
 
         if (isStarted == true) {
-            View tview = findViewById(R.id.amp);
-            tview.setVisibility(View.INVISIBLE);
+            TextView tview = (TextView) findViewById(R.id.amp);
+            tview.setText("Press START to begin!");
 
             // previously visible view
             final View myView = findViewById(R.id.graph);
@@ -177,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             // if recording flag is true then keep mapping graph
             while(recording_flag){
                 final int amp_val = getAmplitude();
-                final String amp_val_string = amp_val + "";
+                final String amp_val_string = amp_val + " dB";
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
