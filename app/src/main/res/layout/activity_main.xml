@@ -14,41 +14,46 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="START"
-        android:id="@+id/button"
+        android:text="@string/start"
+        android:id="@+id/startButton"
         android:background="@color/colorPrimaryDark"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="50dip"
+        android:layout_marginTop="30dip"
         android:layout_marginLeft="50dip"
         android:onClick="startMIC"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="STOP"
-        android:id="@+id/button3"
+        android:text="@string/stop"
+        android:id="@+id/stopButton"
         android:onClick="stopMIC"
         android:background="@color/colorPrimaryDark"
         android:textColor="@android:color/white"
         android:textSize="20sp"
-        android:layout_alignLeft="@+id/button"
+        android:layout_alignLeft="@+id/startButton"
         android:layout_alignEnd="@+id/graph"
-        android:layout_marginTop="50dip"
+        android:layout_marginTop="30dip"
         android:layout_marginRight="50dip" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Press START to begin!"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
+        android:text="@string/press_start"
+        android:textColor="@android:color/white"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:shadowDx="10"
+        android:shadowDy="10"
+        android:shadowRadius="2"
+        android:shadowColor="@android:color/black"
         android:id="@+id/amp"
-        android:layout_below="@+id/button3"
+        android:layout_below="@+id/stopButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="67dp" />
+        android:layout_marginTop="60dp"
+        android:height="60dp"/>
 
     <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
@@ -58,4 +63,15 @@
         android:layout_alignParentEnd="true"
         android:background="@android:color/white"
         android:visibility="invisible" />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/db_meter"
+        android:layout_centerVertical="true"
+        style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+        android:progressDrawable="@drawable/greenprogress"
+        android:layout_alignStart="@+id/startButton"
+        android:layout_alignEnd="@+id/stopButton"
+        />
+
 </RelativeLayout>

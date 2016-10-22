@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Silencio</string>
+    <string name="press_start">Press START</string>
+    <string name="start">START</string>
+    <string name="stop">STOP</string>
+    <string name="silencio_app_logo">Silencio app logo</string>
+    <string name="silencio">Silencio</string>
 </resources>
