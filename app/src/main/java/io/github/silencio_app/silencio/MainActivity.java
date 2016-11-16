@@ -2,11 +2,20 @@ package io.github.silencio_app.silencio;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.ProgressBar;
@@ -19,7 +28,9 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
+
 
     private MediaRecorder mediaRecorder = null;
     private final String MSG = "Main Thread Logging";
@@ -33,6 +44,95 @@ public class MainActivity extends AppCompatActivity {
     private static final String PREVIOUS_dB = "Previous noted decibals ";
     private int db_level; // decibel levels
     private ProgressBar db_meter; // decibel meter
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        amplitude = (TextView)findViewById(R.id.amp);
+        db_meter = (ProgressBar)findViewById(R.id.db_meter);
+        /**
+         *  Initialising the empty graph
+         */
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+        series = new LineGraphSeries<>();
+        graph.addSeries(series);
+        Viewport viewport = graph.getViewport();
+        viewport.setYAxisBoundsManual(true);
+        viewport.setMinY(0);  // min value is 0
+        viewport.setMaxY(100);  // max value is 32768
+        viewport.setMaxX(100);  // 10 units frame
+        viewport.setScalable(true); // auto scroll to right
+    }
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        if (id == R.id.nav_task_home) {
+//            Intent intent = new Intent(this, TaskHomeActivity.class);
+//            startActivity(intent);
+        } else if (id == R.id.nav_profile) {
+//            Intent intent = new Intent(this, ProfileActivity.class);
+//            startActivity(intent);
+        } else if (id == R.id.nav_account_setting) {
+//            Intent intent = new Intent(this, SettingActivity.class);
+//            startActivity(intent);
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
     /**
      * Function called when start button is pressed
      * @param view
@@ -142,27 +242,7 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putInt(PREVIOUS_dB, db_level);
         super.onSaveInstanceState(savedInstanceState);
     }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setContentView(R.layout.activity_main);
 
-        amplitude = (TextView)findViewById(R.id.amp);
-        db_meter = (ProgressBar)findViewById(R.id.db_meter);
-        /**
-         *  Initialising the empty graph
-         */
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        series = new LineGraphSeries<>();
-        graph.addSeries(series);
-        Viewport viewport = graph.getViewport();
-        viewport.setYAxisBoundsManual(true);
-        viewport.setMinY(0);  // min value is 0
-        viewport.setMaxY(100);  // max value is 32768
-        viewport.setMaxX(100);  // 10 units frame
-        viewport.setScalable(true); // auto scroll to right
-    }
 
     /**
      * private class for fetching amplitude and mapping graph
