@@ -13,34 +13,6 @@
     tools:context="io.github.silencio_app.silencio.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-
-    <!--<Button-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="@string/start"-->
-    <!--android:id="@+id/startButton"-->
-    <!--android:background="@color/colorPrimaryDark"-->
-    <!--android:textColor="@android:color/white"-->
-    <!--android:textSize="20sp"-->
-    <!--android:layout_alignParentStart="true"-->
-    <!--android:layout_marginTop="30dip"-->
-    <!--android:layout_marginLeft="50dip"-->
-    <!--android:onClick="startMIC"/>-->
-
-    <!--<Button-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="@string/stop"-->
-    <!--android:id="@+id/stopButton"-->
-    <!--android:onClick="stopMIC"-->
-    <!--android:background="@color/colorPrimaryDark"-->
-    <!--android:textColor="@android:color/white"-->
-    <!--android:textSize="20sp"-->
-    <!--android:layout_alignLeft="@+id/startButton"-->
-    <!--android:layout_alignEnd="@+id/graph"-->
-    <!--android:layout_marginTop="30dip"-->
-    <!--android:layout_marginRight="50dip" />-->
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -104,10 +76,11 @@
 
         <com.jjoe64.graphview.GraphView
             android:layout_width="match_parent"
-            android:layout_height="200dip"
+            android:layout_height="250dip"
             android:id="@+id/graph"
-            android:background="@android:color/white"
+            android:background="#f1eeee"
             android:visibility="invisible"
-            android:layout_marginTop="60dp"/>
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"/>
     </LinearLayout>
 </RelativeLayout>
