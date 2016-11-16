@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity
     private boolean recording_flag = false; // Boolean to check if graph has to be plot or not
     private LineGraphSeries<DataPoint> series;
     private int lastX = 0;  // Pointer for plotting the amplitude
-    private final double amp_ref = 3.27;
+    private static final double amp_ref = 3.27;
     private static final String PREVIOUS_X = "Previous x axis point";
     private static final String PREVIOUS_dB = "Previous noted decibals ";
     private int db_level; // decibel levels
