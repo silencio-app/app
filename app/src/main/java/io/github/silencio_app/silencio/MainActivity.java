@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.Image;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity
     private ProgressBar db_meter; // decibel meter
     private boolean PLAY_PAUSE_STATUS = false;
     private Button play_pause_button;
+    private ImageView loud_image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +67,9 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         amplitude = (TextView)findViewById(R.id.amp);
-        db_meter = (ProgressBar)findViewById(R.id.db_meter);
+//        db_meter = (ProgressBar)findViewById(R.id.db_meter);
         play_pause_button = (Button)findViewById(R.id.play_pause_button);
+        loud_image = (ImageView)findViewById(R.id.loud_image);
         /**
          *  Initialising the empty graph
          */
@@ -171,7 +175,7 @@ public class MainActivity extends AppCompatActivity
 
         // make the graph and meter visible and start the animation
         myView.setVisibility(View.VISIBLE);
-        db_meter.setVisibility(View.VISIBLE);
+//        db_meter.setVisibility(View.VISIBLE);
         anim.start();
     }
     public void hideGraph(View view){
@@ -198,7 +202,7 @@ public class MainActivity extends AppCompatActivity
                 super.onAnimationEnd(animation);
                 // make graph and meter invisible
                 myView.setVisibility(View.INVISIBLE);
-                db_meter.setVisibility(View.GONE);
+//                db_meter.setVisibility(View.GONE);
             }
         });
 
@@ -289,24 +293,27 @@ public class MainActivity extends AppCompatActivity
                     amp_val = raw_amp_val;
                 }
                 db_level = amp_val;
-                final String amp_val_string = amp_val + " dB";
+                final String amp_val_string = amp_val + "";
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         amplitude.setText(amp_val_string);
-                        db_meter.setProgress(amp_val);
+//                        db_meter.setProgress(amp_val);
 
                         /*
                         Provide Style to meter according to decibel values
                          */
-                        if (amp_val <= 70){
-                            db_meter.setProgressDrawable(getDrawable(R.drawable.greenprogress));
+                        if (amp_val <= 50){
+                            loud_image.setBackground(getResources().getDrawable(R.drawable.sound_level_1));
+//                            db_meter.setProgressDrawable(getDrawable(R.drawable.greenprogress));
                         }
-                        if (amp_val > 70 && amp_val <= 90){
-                            db_meter.setProgressDrawable(getDrawable(R.drawable.orangeprogress));
+                        if (amp_val > 50 && amp_val <= 70){
+                            loud_image.setBackground(getResources().getDrawable(R.drawable.sound_level_2));
+//                            db_meter.setProgressDrawable(getDrawable(R.drawable.orangeprogress));
                         }
-                        if (amp_val > 90){
-                            db_meter.setProgressDrawable(getDrawable(R.drawable.redprogress));
+                        if (amp_val > 70){
+                            loud_image.setBackground(getResources().getDrawable(R.drawable.sound_level_3));
+//                            db_meter.setProgressDrawable(getDrawable(R.drawable.redprogress));
                         }
                         series.appendData(new DataPoint(lastX++, amp_val), true, 100);
                     }

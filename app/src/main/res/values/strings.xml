@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Silencio</string>
-    <string name="press_start">Press START</string>
+    <string name="press_start">0</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

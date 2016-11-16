@@ -48,31 +48,54 @@
                 android:onClick="play_pause_handler"
                 android:background="@drawable/ic_menu_send"/>
         </RelativeLayout>
-
-        <ProgressBar
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/db_meter"
-            android:layout_marginTop="40dp"
-            style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
-            android:progressDrawable="@drawable/greenprogress"/>
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="30dp"
+                android:id="@+id/loud_image"
+                android:background="@drawable/sound_level_1"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/press_start"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="60sp"
+                android:textStyle="bold"
+                android:shadowDx="10"
+                android:shadowDy="10"
+                android:textAlignment="center"
+                android:shadowRadius="2"
+                android:shadowColor="@android:color/black"
+                android:id="@+id/amp"
+                android:layout_marginTop="30dp"
+                android:layout_toRightOf="@+id/loud_image"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/press_start"
-            android:textColor="@android:color/black"
-            android:textSize="50sp"
-            android:textStyle="bold"
-            android:shadowDx="10"
-            android:shadowDy="10"
-            android:textAlignment="center"
-            android:shadowRadius="2"
-            android:shadowColor="@android:color/black"
-            android:id="@+id/amp"
-            android:layout_marginTop="60dp"
-            android:height="60dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="dB"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:id="@+id/textView3"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_below="@+id/amp"
+                android:layout_toRightOf="@+id/loud_image"/>
+
+        </RelativeLayout>
+
+        <!--<ProgressBar-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/db_meter"-->
+            <!--android:layout_marginTop="40dp"-->
+            <!--style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"-->
+            <!--android:progressDrawable="@drawable/greenprogress"/>-->
 
         <com.jjoe64.graphview.GraphView
             android:layout_width="match_parent"
@@ -80,6 +103,7 @@
             android:id="@+id/graph"
             android:background="#f1eeee"
             android:visibility="invisible"
+            android:layout_marginTop="20dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"/>
     </LinearLayout>
