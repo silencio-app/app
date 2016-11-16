@@ -151,34 +151,62 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
+    public void showGraph(View view){
+        View myView = findViewById(R.id.graph);
+
+        // get the center for the clipping circle
+        int cx = myView.getWidth() / 2;
+        int cy = myView.getHeight() / 2;
+
+        // get the final radius for the clipping circle
+        float finalRadius = (float) Math.hypot(cx, cy);
+
+        // create the animator for this view (the start radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+
+        // make the graph and meter visible and start the animation
+        myView.setVisibility(View.VISIBLE);
+        db_meter.setVisibility(View.VISIBLE);
+        anim.start();
+    }
+    public void hideGraph(View view){
+        TextView tview = (TextView) findViewById(R.id.amp);
+        tview.setText(getString(R.string.press_start));
+
+        // previously visible view
+        final View myView = findViewById(R.id.graph);
+
+        // get the center for the clipping circle
+        int cx = myView.getWidth() / 2;
+        int cy = myView.getHeight() / 2;
+
+        // get the initial radius for the clipping circle
+        float initialRadius = (float) Math.hypot(cx, cy);
+
+        // create the animation (the final radius is zero)
+        Animator anim = ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
+
+        // make the view invisible when the animation is done
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                // make graph and meter invisible
+                myView.setVisibility(View.INVISIBLE);
+                db_meter.setVisibility(View.GONE);
+            }
+        });
+
+        // start the animation
+        anim.start();
+    }
+
     public void startMIC(View view){
 
         /**
          * start the MIC if mediaRecorder instance is created else Pops up a message
          */
-        if (!isStarted) {
-            // previously invisible view
-            View myView = findViewById(R.id.graph);
-
-            // get the center for the clipping circle
-            int cx = myView.getWidth() / 2;
-            int cy = myView.getHeight() / 2;
-
-            // get the final radius for the clipping circle
-            float finalRadius = (float) Math.hypot(cx, cy);
-
-            // create the animator for this view (the start radius is zero)
-            Animator anim =
-                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-
-            // make the graph and meter visible and start the animation
-            myView.setVisibility(View.VISIBLE);
-            db_meter.setVisibility(View.VISIBLE);
-            anim.start();
-
-            isStarted = true;
-        }
-
         if(mediaRecorder == null){
             mediaRecorder = new MediaRecorder();
             mediaRecorder.reset();
@@ -194,6 +222,7 @@ public class MainActivity extends AppCompatActivity
 
                 Thread newT = new Thread(new AudioListener());  // New Thread is created to handle the amplitude fetching and plotting graph
                 newT.start();
+                showGraph(view);
 
             }
             catch (IOException e){
@@ -205,46 +234,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void stopMIC(View view) {
-
-        if (isStarted) {
-            TextView tview = (TextView) findViewById(R.id.amp);
-            tview.setText(getString(R.string.press_start));
-
-            // previously visible view
-            final View myView = findViewById(R.id.graph);
-
-            // get the center for the clipping circle
-            int cx = myView.getWidth() / 2;
-            int cy = myView.getHeight() / 2;
-
-            // get the initial radius for the clipping circle
-            float initialRadius = (float) Math.hypot(cx, cy);
-
-            // create the animation (the final radius is zero)
-            Animator anim = ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
-
-            // make the view invisible when the animation is done
-            anim.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    // make graph and meter invisible
-                    myView.setVisibility(View.INVISIBLE);
-                    db_meter.setVisibility(View.GONE);
-                }
-            });
-
-            // start the animation
-            anim.start();
-
-            isStarted = false;
-        }
-
         if (mediaRecorder != null) {
             mediaRecorder.stop();
             mediaRecorder.release();
             mediaRecorder = null;
             recording_flag = false; //reset the flag
+            hideGraph(view);
         }
         else{
             Log.d(MSG, "================== NO MIC LOCKED ================");
