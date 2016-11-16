@@ -10,4 +10,7 @@
     <string name="stop">STOP</string>
     <string name="silencio_app_logo">Silencio app logo</string>
     <string name="silencio">Silencio</string>
+
+    <string name="explore_world">Explore World</string>
+    <string name="direct_teller">Direct Teller</string>
 </resources>

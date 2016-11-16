@@ -5,11 +5,11 @@
         <item
             android:id="@+id/nav_task_home"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Tasks" />
+            android:title="@string/explore_world" />
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Profile" />
+            android:title="@string/direct_teller" />
         <item
             android:id="@+id/nav_account_setting"
             android:icon="@drawable/ic_menu_manage"
