@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private static final String PREVIOUS_dB = "Previous noted decibals ";
     private int db_level; // decibel levels
     private ProgressBar db_meter; // decibel meter
+    private boolean PLAY_PAUSE_STATUS = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +138,19 @@ public class MainActivity extends AppCompatActivity
      * Function called when start button is pressed
      * @param view
      */
+    public void play_pause_handler(View view){
+        if (!PLAY_PAUSE_STATUS){
+            // If Mic is not running
+            startMIC(view);
+            PLAY_PAUSE_STATUS = true;
+        }
+        else{
+            // If Mic is running
+            stopMIC(view);
+            PLAY_PAUSE_STATUS = false;
+        }
+
+    }
     public void startMIC(View view){
 
         /**
