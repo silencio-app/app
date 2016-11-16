@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         viewport.setYAxisBoundsManual(true);
         viewport.setMinY(0);  // min value is 0
         viewport.setMaxY(100);  // max value is 32768
-        viewport.setMaxX(10);  // 10 units frame
+        viewport.setMaxX(100);  // 10 units frame
         viewport.setScalable(true); // auto scroll to right
     }
 
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(MSG, " === AMPLITUDE === "+ amp_val_string);
                 try {
                     // Sleep for 600 ms for next value
-                    Thread.sleep(1000);
+                    Thread.sleep(150);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
