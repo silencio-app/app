@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -39,12 +40,12 @@ public class MainActivity extends AppCompatActivity
     private LineGraphSeries<DataPoint> series;
     private int lastX = 0;  // Pointer for plotting the amplitude
     private final double amp_ref = 3.27;
-    private boolean isStarted = false;
     private static final String PREVIOUS_X = "Previous x axis point";
     private static final String PREVIOUS_dB = "Previous noted decibals ";
     private int db_level; // decibel levels
     private ProgressBar db_meter; // decibel meter
     private boolean PLAY_PAUSE_STATUS = false;
+    private Button play_pause_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity
 
         amplitude = (TextView)findViewById(R.id.amp);
         db_meter = (ProgressBar)findViewById(R.id.db_meter);
+        play_pause_button = (Button)findViewById(R.id.play_pause_button);
         /**
          *  Initialising the empty graph
          */
@@ -143,11 +145,13 @@ public class MainActivity extends AppCompatActivity
             // If Mic is not running
             startMIC(view);
             PLAY_PAUSE_STATUS = true;
+            play_pause_button.setBackground(getResources().getDrawable(R.drawable.ic_menu_slideshow));
         }
         else{
             // If Mic is running
             stopMIC(view);
             PLAY_PAUSE_STATUS = false;
+            play_pause_button.setBackground(getResources().getDrawable(R.drawable.ic_menu_send));
         }
 
     }

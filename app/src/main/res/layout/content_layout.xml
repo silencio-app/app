@@ -69,11 +69,12 @@
             <Button
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:id="@+id/play_pause_button"
                 android:layout_marginTop="15dp"
                 android:layout_marginLeft="70dp"
                 android:layout_toRightOf="@+id/textView2"
                 android:onClick="play_pause_handler"
-                android:background="@drawable/ic_menu_slideshow"/>
+                android:background="@drawable/ic_menu_send"/>
         </RelativeLayout>
 
         <ProgressBar
