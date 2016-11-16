@@ -89,6 +89,27 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:background="@drawable/explore_card_header">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Sound Intensity (dB)"
+                android:id="@+id/textView2"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
+                android:layout_marginTop="15dp"
+                android:textSize="18sp"
+                android:layout_marginStart="50dp"/>
+            <Button
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="70dp"
+                android:layout_toRightOf="@+id/textView2"
+                android:onClick="startMIC"
+                android:background="@drawable/ic_menu_slideshow"/>
         </RelativeLayout>
 
         <ProgressBar
