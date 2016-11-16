@@ -67,6 +67,7 @@
                 android:textSize="60sp"
                 android:textStyle="bold"
                 android:shadowDx="10"
+                android:fontFamily="sans-serif"
                 android:shadowDy="10"
                 android:textAlignment="center"
                 android:shadowRadius="2"
