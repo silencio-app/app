@@ -2,10 +2,13 @@ package io.github.silencio_app.silencio;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.media.Image;
 import android.media.MediaRecorder;
+import android.net.DhcpInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -21,6 +24,7 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -30,6 +34,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.IOException;
+import java.util.Formatter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -49,6 +54,10 @@ public class MainActivity extends AppCompatActivity
     private boolean PLAY_PAUSE_STATUS = false;
     private Button play_pause_button;
     private ImageView loud_image;
+    private WifiManager mWifiManager;
+    private DhcpInfo dhcpInfo;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +91,7 @@ public class MainActivity extends AppCompatActivity
         viewport.setMaxY(100);  // max value is 32768
         viewport.setMaxX(100);  // 10 units frame
         viewport.setScalable(true); // auto scroll to right
+
     }
     @Override
     public void onBackPressed() {
@@ -319,6 +329,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
                 Log.d(MSG, " === AMPLITUDE === "+ amp_val_string);
+
                 try {
                     // Sleep for 600 ms for next value
                     Thread.sleep(150);
@@ -328,5 +339,13 @@ public class MainActivity extends AppCompatActivity
             }
             Log.d(MSG, "======== Thread Destroyed =========");
         }
+    }
+    public void get_gateway(){
+
+        mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        dhcpInfo = mWifiManager.getDhcpInfo();
+        int gateway = dhcpInfo.gateway;
+
+        Log.d(" MSG ", "================= "+ gateway);
     }
 }
