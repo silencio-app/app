@@ -69,8 +69,6 @@ public class MainActivity extends AppCompatActivity
     private EditText location_name;
     private boolean canR, canW;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,12 +85,14 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
         amplitude = (TextView)findViewById(R.id.amp);
 //        db_meter = (ProgressBar)findViewById(R.id.db_meter);
         play_pause_button = (Button)findViewById(R.id.play_pause_button);
         loud_image = (ImageView)findViewById(R.id.loud_image);
         current_location = (TextView)findViewById(R.id.current_location);
         location_name = (EditText)findViewById(R.id.location_name);
+
         /**
          *  Initialising the empty graph
          */
