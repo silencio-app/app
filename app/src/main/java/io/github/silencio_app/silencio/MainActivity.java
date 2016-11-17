@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity
     private ImageView loud_image;
     private WifiManager mWifiManager;
     private DhcpInfo dhcpInfo;
+    private TextView current_location;
 
 
 
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity
 //        db_meter = (ProgressBar)findViewById(R.id.db_meter);
         play_pause_button = (Button)findViewById(R.id.play_pause_button);
         loud_image = (ImageView)findViewById(R.id.loud_image);
+        current_location = (TextView)findViewById(R.id.current_location);
         /**
          *  Initialising the empty graph
          */
@@ -91,6 +93,10 @@ public class MainActivity extends AppCompatActivity
         viewport.setMaxY(100);  // max value is 32768
         viewport.setMaxX(100);  // 10 units frame
         viewport.setScalable(true); // auto scroll to right
+
+        Thread newT2 = new Thread(new IPMapper());  // New Thread is created to handle the amplitude fetching and plotting graph
+        newT2.start();
+
 
     }
     @Override
@@ -270,7 +276,42 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    private class IPMapper implements Runnable{
 
+        public String get_gateway_ip(){
+
+            mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            dhcpInfo = mWifiManager.getDhcpInfo();
+            int gateway = dhcpInfo.gateway;
+            String binary_string = Integer.toBinaryString(gateway);
+            int len = binary_string.length();
+            String oct1, oct2, oct3, oct4;
+            oct1 = binary_string.substring(len - 8, len);
+            oct2 = binary_string.substring(len - 16, len - 8);
+            oct3 = binary_string.substring(len - 24, len - 16);
+            oct4 = binary_string.substring(0, len - 24);
+            Log.d(" MSG ", " =========== Connected to "+ Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2));
+            return Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2);
+        }
+        @Override
+        public void run() {
+            while(true){
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String ip = get_gateway_ip();
+                        current_location.setText(ip);
+                    }
+                });
+                try {
+                    // Sleep for 600 ms for next value
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     /**
      * private class for fetching amplitude and mapping graph
      */
@@ -330,7 +371,6 @@ public class MainActivity extends AppCompatActivity
                 });
                 Log.d(MSG, " === AMPLITUDE === "+ amp_val_string);
 //                long startTime = System.nanoTime();
-                get_gateway();
 //                long endTime = System.nanoTime();
 //                long duration = (endTime - startTime)/1000000;
 //                Log.d("MSG", " Time took is ============== "+duration);
@@ -345,19 +385,5 @@ public class MainActivity extends AppCompatActivity
             }
             Log.d(MSG, "======== Thread Destroyed =========");
         }
-    }
-    public void get_gateway(){
-
-        mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        dhcpInfo = mWifiManager.getDhcpInfo();
-        int gateway = dhcpInfo.gateway;
-        String binary_string = Integer.toBinaryString(gateway);
-        int len = binary_string.length();
-        String oct1, oct2, oct3, oct4;
-        oct1 = binary_string.substring(len - 8, len);
-        oct2 = binary_string.substring(len - 16, len - 8);
-        oct3 = binary_string.substring(len - 24, len - 16);
-        oct4 = binary_string.substring(0, len - 24);
-        Log.d(" MSG ", " =========== Connected to "+ Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2));
     }
 }
