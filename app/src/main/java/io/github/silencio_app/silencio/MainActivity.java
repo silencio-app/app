@@ -329,6 +329,12 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
                 Log.d(MSG, " === AMPLITUDE === "+ amp_val_string);
+//                long startTime = System.nanoTime();
+                get_gateway();
+//                long endTime = System.nanoTime();
+//                long duration = (endTime - startTime)/1000000;
+//                Log.d("MSG", " Time took is ============== "+duration);
+
 
                 try {
                     // Sleep for 600 ms for next value
@@ -345,7 +351,13 @@ public class MainActivity extends AppCompatActivity
         mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         dhcpInfo = mWifiManager.getDhcpInfo();
         int gateway = dhcpInfo.gateway;
-
-        Log.d(" MSG ", "================= "+ gateway);
+        String binary_string = Integer.toBinaryString(gateway);
+        int len = binary_string.length();
+        String oct1, oct2, oct3, oct4;
+        oct1 = binary_string.substring(len - 8, len);
+        oct2 = binary_string.substring(len - 16, len - 8);
+        oct3 = binary_string.substring(len - 24, len - 16);
+        oct4 = binary_string.substring(0, len - 24);
+        Log.d(" MSG ", " =========== Connected to "+ Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2));
     }
 }
