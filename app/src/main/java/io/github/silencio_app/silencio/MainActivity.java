@@ -8,11 +8,13 @@ import android.content.pm.ActivityInfo;
 import android.media.Image;
 import android.media.MediaRecorder;
 import android.net.DhcpInfo;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -286,14 +288,6 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    /* Checks if external storage is available for read and write */
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
     public boolean isExternalWritable(){
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
@@ -357,17 +351,32 @@ public class MainActivity extends AppCompatActivity
         public void get_gateway_ip(){
 
             mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            dhcpInfo = mWifiManager.getDhcpInfo();
-            int gateway = dhcpInfo.gateway;
-            String binary_string = Integer.toBinaryString(gateway);
-            int len = binary_string.length();
-            String oct1, oct2, oct3, oct4;
-            oct1 = binary_string.substring(len - 8, len);
-            oct2 = binary_string.substring(len - 16, len - 8);
-            oct3 = binary_string.substring(len - 24, len - 16);
-            oct4 = binary_string.substring(0, len - 24);
-            Log.d(" MSG ", " =========== Connected to "+ Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2));
-            current_ip = Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2);
+
+            if(mWifiManager.isWifiEnabled()){
+                WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                if (wifiInfo.getNetworkId() == -1){
+                    // Not connected to an access point
+                    Toast.makeText(getApplicationContext(), " You are not connected to any access point", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    // Connected to access point
+                    dhcpInfo = mWifiManager.getDhcpInfo();
+                    int gateway = dhcpInfo.gateway;
+                    String binary_string = Integer.toBinaryString(gateway);
+                    int len = binary_string.length();
+                    String oct1, oct2, oct3, oct4;
+                    oct1 = binary_string.substring(len - 8, len);
+                    oct2 = binary_string.substring(len - 16, len - 8);
+                    oct3 = binary_string.substring(len - 24, len - 16);
+                    oct4 = binary_string.substring(0, len - 24);
+                    Log.d(" MSG ", " =========== Connected to "+ Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2));
+                    current_ip = Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2);
+                }
+            }
+            else{
+
+                Toast.makeText(getApplicationContext(), " Wifi Not Enabled", Toast.LENGTH_LONG).show();
+            }
         }
         @Override
         public void run() {
