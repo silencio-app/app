@@ -10,6 +10,7 @@ import android.media.MediaRecorder;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,16 +24,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Formatter;
 
@@ -57,6 +62,11 @@ public class MainActivity extends AppCompatActivity
     private DhcpInfo dhcpInfo;
     private TextView current_location;
 
+    private String current_ip;
+    private final String FILENAME = "myFingerprinting";
+    private EditText location_name;
+    private boolean canR, canW;
+
 
 
     @Override
@@ -80,6 +90,7 @@ public class MainActivity extends AppCompatActivity
         play_pause_button = (Button)findViewById(R.id.play_pause_button);
         loud_image = (ImageView)findViewById(R.id.loud_image);
         current_location = (TextView)findViewById(R.id.current_location);
+        location_name = (EditText)findViewById(R.id.location_name);
         /**
          *  Initialising the empty graph
          */
@@ -275,9 +286,75 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+    public boolean isExternalWritable(){
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
+    }
+    public boolean isExternalReadable(){
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
+    }
+    public void externalState(){
+        if (isExternalReadable() && isExternalWritable()){
+            canR = canW = true;
+        }
+        else if (isExternalReadable() && !isExternalWritable()){
+            canR = true;
+            canW = false;
+        }
+        else{
+            canR = canW = false;
+        }
+    }
+    public File getAlbumStorageDir(String albumName) {
+        // Get the directory for the user's public pictures directory.
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOCUMENTS), albumName);
+        if (!file.mkdirs()) {
+            file.mkdirs();
+        }
+        return file;
+    }
+    public void bind_ip_value_to_location(View view){
+        Log.d(MSG, "======================== YES I HAVE BEEEN  CALLED ===============================");
+        FileOutputStream fos;
+        String name = location_name.getText().toString();
+
+        File file;
+        externalState();
+        if(canW && canR){
+            FileOutputStream outputStream;
+            try {
+                file = new File(getAlbumStorageDir("Files Generated"), FILENAME+".txt");
+
+                outputStream = new FileOutputStream(file, true);
+                outputStream.write(name.getBytes());
+                outputStream.write(" == ".getBytes());
+                outputStream.write(current_ip.getBytes());
+                outputStream.write("\n".getBytes());
+                outputStream.close();
+                Toast.makeText(getApplicationContext(), "SAVED", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Cannot Write to External Now", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
     private class IPMapper implements Runnable{
 
-        public String get_gateway_ip(){
+        public void get_gateway_ip(){
 
             mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             dhcpInfo = mWifiManager.getDhcpInfo();
@@ -290,7 +367,7 @@ public class MainActivity extends AppCompatActivity
             oct3 = binary_string.substring(len - 24, len - 16);
             oct4 = binary_string.substring(0, len - 24);
             Log.d(" MSG ", " =========== Connected to "+ Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2));
-            return Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2);
+            current_ip = Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2);
         }
         @Override
         public void run() {
@@ -298,8 +375,8 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String ip = get_gateway_ip();
-                        current_location.setText(ip);
+                        get_gateway_ip();
+                        current_location.setText(current_ip);
                     }
                 });
                 try {

@@ -23,7 +23,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="125dp"
             android:background="@drawable/explore_card_header">
 
             <TextView
@@ -78,7 +78,16 @@
                 android:background="@drawable/ic_menu_camera"
                 android:layout_toRightOf="@+id/current_location"
                 android:layout_marginLeft="20dp"
+                android:onClick="bind_ip_value_to_location"
                 android:layout_alignBottom="@+id/location_label"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/location_name"
+                android:layout_below="@+id/location_label"
+                android:layout_marginRight="20dp"
+                android:layout_alignStart="@+id/current_location" />
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
