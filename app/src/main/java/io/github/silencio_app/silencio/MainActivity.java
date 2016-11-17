@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity
     private static final String PREVIOUS_X = "Previous x axis point";
     private static final String PREVIOUS_dB = "Previous noted decibals ";
     private int db_level; // decibel levels
-    private ProgressBar db_meter; // decibel meter
     private boolean PLAY_PAUSE_STATUS = false;
     private Button play_pause_button;
     private ImageView loud_image;

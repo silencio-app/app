@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Current Location"
+                android:text="Location :"
                 android:id="@+id/location_label"
                 android:layout_marginTop="25dp"
                 android:textStyle="bold"
@@ -72,6 +72,13 @@
                 android:layout_alignBottom="@+id/location_label"
                 android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@+id/location_label"/>
+            <Button
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@drawable/ic_menu_camera"
+                android:layout_toRightOf="@+id/current_location"
+                android:layout_marginLeft="20dp"
+                android:layout_alignBottom="@+id/location_label"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
