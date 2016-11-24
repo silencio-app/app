@@ -21,6 +21,7 @@ import java.net.URL;
 public class ServerListnerActivity extends AppCompatActivity {
     private TextView data;
     private static String LOGIN_URL = "http://35.163.237.103/silencio";
+    private static String POST_URL = "http://35.163.237.103/silencio/post/";
     private ProgressDialog mDialog;
 
     @Override
