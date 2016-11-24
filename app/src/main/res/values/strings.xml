@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Silencio</string>
-    <string name="press_start">Press START</string>
+    <string name="press_start">0</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -10,4 +10,7 @@
     <string name="stop">STOP</string>
     <string name="silencio_app_logo">Silencio app logo</string>
     <string name="silencio">Silencio</string>
+
+    <string name="explore_world">Explore World</string>
+    <string name="direct_teller">Direct Teller</string>
 </resources>

@@ -2,12 +2,19 @@ package io.github.silencio_app.silencio;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.Image;
 import android.media.MediaRecorder;
+import android.net.DhcpInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,15 +25,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Formatter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -38,12 +53,21 @@ public class MainActivity extends AppCompatActivity
     private boolean recording_flag = false; // Boolean to check if graph has to be plot or not
     private LineGraphSeries<DataPoint> series;
     private int lastX = 0;  // Pointer for plotting the amplitude
-    private final double amp_ref = 3.27;
-    private boolean isStarted = false;
+    private static final double amp_ref = 3.27;
     private static final String PREVIOUS_X = "Previous x axis point";
     private static final String PREVIOUS_dB = "Previous noted decibals ";
     private int db_level; // decibel levels
-    private ProgressBar db_meter; // decibel meter
+    private boolean PLAY_PAUSE_STATUS = false;
+    private Button play_pause_button;
+    private ImageView loud_image;
+    private WifiManager mWifiManager;
+    private DhcpInfo dhcpInfo;
+    private TextView current_location;
+
+    private String current_ip;
+    private final String FILENAME = "myFingerprinting";
+    private EditText location_name;
+    private boolean canR, canW;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +85,14 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
         amplitude = (TextView)findViewById(R.id.amp);
-        db_meter = (ProgressBar)findViewById(R.id.db_meter);
+//        db_meter = (ProgressBar)findViewById(R.id.db_meter);
+        play_pause_button = (Button)findViewById(R.id.play_pause_button);
+        loud_image = (ImageView)findViewById(R.id.loud_image);
+        current_location = (TextView)findViewById(R.id.current_location);
+        location_name = (EditText)findViewById(R.id.location_name);
+
         /**
          *  Initialising the empty graph
          */
@@ -75,6 +105,11 @@ public class MainActivity extends AppCompatActivity
         viewport.setMaxY(100);  // max value is 32768
         viewport.setMaxX(100);  // 10 units frame
         viewport.setScalable(true); // auto scroll to right
+
+        Thread newT2 = new Thread(new IPMapper());  // New Thread is created to handle the amplitude fetching and plotting graph
+        newT2.start();
+
+
     }
     @Override
     public void onBackPressed() {
@@ -137,34 +172,77 @@ public class MainActivity extends AppCompatActivity
      * Function called when start button is pressed
      * @param view
      */
+    public void play_pause_handler(View view){
+        if (!PLAY_PAUSE_STATUS){
+            // If Mic is not running
+            startMIC(view);
+            PLAY_PAUSE_STATUS = true;
+            play_pause_button.setBackground(getResources().getDrawable(R.drawable.ic_menu_slideshow));
+        }
+        else{
+            // If Mic is running
+            stopMIC(view);
+            PLAY_PAUSE_STATUS = false;
+            play_pause_button.setBackground(getResources().getDrawable(R.drawable.ic_menu_send));
+        }
+
+    }
+    public void showGraph(View view){
+        View myView = findViewById(R.id.graph);
+
+        // get the center for the clipping circle
+        int cx = myView.getWidth() / 2;
+        int cy = myView.getHeight() / 2;
+
+        // get the final radius for the clipping circle
+        float finalRadius = (float) Math.hypot(cx, cy);
+
+        // create the animator for this view (the start radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+
+        // make the graph and meter visible and start the animation
+        myView.setVisibility(View.VISIBLE);
+//        db_meter.setVisibility(View.VISIBLE);
+        anim.start();
+    }
+    public void hideGraph(View view){
+        TextView tview = (TextView) findViewById(R.id.amp);
+        tview.setText(getString(R.string.press_start));
+
+        // previously visible view
+        final View myView = findViewById(R.id.graph);
+
+        // get the center for the clipping circle
+        int cx = myView.getWidth() / 2;
+        int cy = myView.getHeight() / 2;
+
+        // get the initial radius for the clipping circle
+        float initialRadius = (float) Math.hypot(cx, cy);
+
+        // create the animation (the final radius is zero)
+        Animator anim = ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
+
+        // make the view invisible when the animation is done
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                // make graph and meter invisible
+                myView.setVisibility(View.INVISIBLE);
+//                db_meter.setVisibility(View.GONE);
+            }
+        });
+
+        // start the animation
+        anim.start();
+    }
+
     public void startMIC(View view){
 
         /**
          * start the MIC if mediaRecorder instance is created else Pops up a message
          */
-        if (!isStarted) {
-            // previously invisible view
-            View myView = findViewById(R.id.graph);
-
-            // get the center for the clipping circle
-            int cx = myView.getWidth() / 2;
-            int cy = myView.getHeight() / 2;
-
-            // get the final radius for the clipping circle
-            float finalRadius = (float) Math.hypot(cx, cy);
-
-            // create the animator for this view (the start radius is zero)
-            Animator anim =
-                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-
-            // make the graph and meter visible and start the animation
-            myView.setVisibility(View.VISIBLE);
-            db_meter.setVisibility(View.VISIBLE);
-            anim.start();
-
-            isStarted = true;
-        }
-
         if(mediaRecorder == null){
             mediaRecorder = new MediaRecorder();
             mediaRecorder.reset();
@@ -180,6 +258,7 @@ public class MainActivity extends AppCompatActivity
 
                 Thread newT = new Thread(new AudioListener());  // New Thread is created to handle the amplitude fetching and plotting graph
                 newT.start();
+                showGraph(view);
 
             }
             catch (IOException e){
@@ -191,46 +270,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void stopMIC(View view) {
-
-        if (isStarted) {
-            TextView tview = (TextView) findViewById(R.id.amp);
-            tview.setText(getString(R.string.press_start));
-
-            // previously visible view
-            final View myView = findViewById(R.id.graph);
-
-            // get the center for the clipping circle
-            int cx = myView.getWidth() / 2;
-            int cy = myView.getHeight() / 2;
-
-            // get the initial radius for the clipping circle
-            float initialRadius = (float) Math.hypot(cx, cy);
-
-            // create the animation (the final radius is zero)
-            Animator anim = ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
-
-            // make the view invisible when the animation is done
-            anim.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    // make graph and meter invisible
-                    myView.setVisibility(View.INVISIBLE);
-                    db_meter.setVisibility(View.GONE);
-                }
-            });
-
-            // start the animation
-            anim.start();
-
-            isStarted = false;
-        }
-
         if (mediaRecorder != null) {
             mediaRecorder.stop();
             mediaRecorder.release();
             mediaRecorder = null;
             recording_flag = false; //reset the flag
+            hideGraph(view);
         }
         else{
             Log.d(MSG, "================== NO MIC LOCKED ================");
@@ -243,7 +288,115 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    public boolean isExternalWritable(){
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
+    }
+    public boolean isExternalReadable(){
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
+    }
+    public void externalState(){
+        if (isExternalReadable() && isExternalWritable()){
+            canR = canW = true;
+        }
+        else if (isExternalReadable() && !isExternalWritable()){
+            canR = true;
+            canW = false;
+        }
+        else{
+            canR = canW = false;
+        }
+    }
+    public File getAlbumStorageDir(String albumName) {
+        // Get the directory for the user's public pictures directory.
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOCUMENTS), albumName);
+        if (!file.mkdirs()) {
+            file.mkdirs();
+        }
+        return file;
+    }
+    public void bind_ip_value_to_location(View view){
+        Log.d(MSG, "======================== YES I HAVE BEEEN  CALLED ===============================");
+        FileOutputStream fos;
+        String name = location_name.getText().toString();
 
+        File file;
+        externalState();
+        if(canW && canR){
+            FileOutputStream outputStream;
+            try {
+                file = new File(getAlbumStorageDir("Files Generated"), FILENAME+".txt");
+
+                outputStream = new FileOutputStream(file, true);
+                outputStream.write(name.getBytes());
+                outputStream.write(" == ".getBytes());
+                outputStream.write(current_ip.getBytes());
+                outputStream.write("\n".getBytes());
+                outputStream.close();
+                Toast.makeText(getApplicationContext(), "SAVED", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Cannot Write to External Now", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private class IPMapper implements Runnable{
+
+        public void get_gateway_ip(){
+
+            mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+            if(mWifiManager.isWifiEnabled()){
+                WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                if (wifiInfo.getNetworkId() == -1){
+                    // Not connected to an access point
+                    Toast.makeText(getApplicationContext(), " You are not connected to any access point", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    // Connected to access point
+                    dhcpInfo = mWifiManager.getDhcpInfo();
+                    int gateway = dhcpInfo.gateway;
+                    String binary_string = Integer.toBinaryString(gateway);
+                    int len = binary_string.length();
+                    String oct1, oct2, oct3, oct4;
+                    oct1 = binary_string.substring(len - 8, len);
+                    oct2 = binary_string.substring(len - 16, len - 8);
+                    oct3 = binary_string.substring(len - 24, len - 16);
+                    oct4 = binary_string.substring(0, len - 24);
+                    Log.d(" MSG ", " =========== Connected to "+ Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2));
+                    current_ip = Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2);
+                }
+            }
+            else{
+
+                Toast.makeText(getApplicationContext(), " Wifi Not Enabled", Toast.LENGTH_LONG).show();
+            }
+        }
+        @Override
+        public void run() {
+            while(true){
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        get_gateway_ip();
+                        current_location.setText(current_ip);
+                    }
+                });
+                try {
+                    // Sleep for 600 ms for next value
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     /**
      * private class for fetching amplitude and mapping graph
      */
@@ -276,29 +429,38 @@ public class MainActivity extends AppCompatActivity
                     amp_val = raw_amp_val;
                 }
                 db_level = amp_val;
-                final String amp_val_string = amp_val + " dB";
+                final String amp_val_string = amp_val + "";
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         amplitude.setText(amp_val_string);
-                        db_meter.setProgress(amp_val);
+//                        db_meter.setProgress(amp_val);
 
                         /*
                         Provide Style to meter according to decibel values
                          */
-                        if (amp_val <= 70){
-                            db_meter.setProgressDrawable(getDrawable(R.drawable.greenprogress));
+                        if (amp_val <= 50){
+                            loud_image.setBackground(getResources().getDrawable(R.drawable.sound_level_1));
+//                            db_meter.setProgressDrawable(getDrawable(R.drawable.greenprogress));
                         }
-                        if (amp_val > 70 && amp_val <= 90){
-                            db_meter.setProgressDrawable(getDrawable(R.drawable.orangeprogress));
+                        if (amp_val > 50 && amp_val <= 70){
+                            loud_image.setBackground(getResources().getDrawable(R.drawable.sound_level_2));
+//                            db_meter.setProgressDrawable(getDrawable(R.drawable.orangeprogress));
                         }
-                        if (amp_val > 90){
-                            db_meter.setProgressDrawable(getDrawable(R.drawable.redprogress));
+                        if (amp_val > 70){
+                            loud_image.setBackground(getResources().getDrawable(R.drawable.sound_level_3));
+//                            db_meter.setProgressDrawable(getDrawable(R.drawable.redprogress));
                         }
                         series.appendData(new DataPoint(lastX++, amp_val), true, 100);
                     }
                 });
                 Log.d(MSG, " === AMPLITUDE === "+ amp_val_string);
+//                long startTime = System.nanoTime();
+//                long endTime = System.nanoTime();
+//                long duration = (endTime - startTime)/1000000;
+//                Log.d("MSG", " Time took is ============== "+duration);
+
+
                 try {
                     // Sleep for 600 ms for next value
                     Thread.sleep(150);
