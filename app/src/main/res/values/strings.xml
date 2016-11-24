@@ -13,4 +13,16 @@
 
     <string name="explore_world">Explore World</string>
     <string name="direct_teller">Direct Teller</string>
+
+    <string name="slide1title">Welcome</string>
+    <string name="slide1description">Silencio enables you to view the noise levels around you in real-time.</string>
+
+    <string name="slide2title">Visualization</string>
+    <string name="slide2description">Silencio provides you a graph view of the noise levels along with the numerical representation.</string>
+
+    <string name="slide3title">Mapping</string>
+    <string name="slide3description">The noise level information from the Silencio application is co-related with your location in the IIIT Delhi campus and uploaded to our server. This enables us to provide you a real-time view of the noise levels anywhere in campus!</string>
+
+    <string name="slide4title">Let\'s get started!</string>
+    <string name="slide4description">Press DONE to begin.</string>
 </resources>
