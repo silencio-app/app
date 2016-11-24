@@ -42,8 +42,10 @@ public class LoginActivity extends AppCompatActivity {
         // Show response on activity
     }
     public void login(View view){
-        String username = username_et.getText().toString();
-        String password = password_et.getText().toString();
+        String username;/* = username_et.getText().toString();*/
+        String password;/* = password_et.getText().toString();*/
+        username = "vipin";
+        password = "1234";
         if (username.equals("vipin") && password.equals("1234")){
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(USERNAME, username);
