@@ -29,9 +29,9 @@ import java.util.Map;
 
 public class ServerListnerActivity extends AppCompatActivity {
     private TextView data;
-    private static String LOGIN_URL = "http://35.163.237.103/silencio";
-    private static String POST_URL = "http://35.163.237.103/silencio/post/";
-    private static String NEW_CSRF_TOKEN_URL = "http://35.163.237.103/silencio/get_new_cookie/";
+    private static String LOGIN_URL = "http://vipin/silencio/";
+    private static String POST_URL = "http://vipin/silencio/post/";
+    private static String NEW_CSRF_TOKEN_URL = "http://vipin/silencio/get_new_cookie/";
     private ProgressDialog mDialog;
 
     @Override
