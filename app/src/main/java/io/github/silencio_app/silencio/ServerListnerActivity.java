@@ -31,6 +31,7 @@ public class ServerListnerActivity extends AppCompatActivity {
     private TextView data;
     private static String LOGIN_URL = "http://35.163.237.103/silencio";
     private static String POST_URL = "http://35.163.237.103/silencio/post/";
+    private static String NEW_CSRF_TOKEN_URL = "http://35.163.237.103/silencio/get_new_cookie/";
     private ProgressDialog mDialog;
 
     @Override
@@ -76,32 +77,30 @@ public class ServerListnerActivity extends AppCompatActivity {
 
 
     }
+    private String get_data_to_post(){
+        String urlParameters = null;
+        try {
+            urlParameters= URLEncoder.encode("code","utf-8")+"="+URLEncoder.encode("100","utf-8");
+            urlParameters+= "&"+URLEncoder.encode("username","utf-8")+"="+URLEncoder.encode("vipin","utf-8");
+            urlParameters+= "&"+URLEncoder.encode("password","utf-8")+"="+URLEncoder.encode("1234","utf-8");
+            return urlParameters;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     class PostData extends AsyncTask<String, Void, String>{
         @Override
         protected String doInBackground(String... strings) {
-//            try {
-//                doposting(strings[0]);
-//            } catch (IOException | JSONException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
             String response="";
-            String urlParameters = null;
-            try {
-                urlParameters= URLEncoder.encode("code","utf-8")+"="+URLEncoder.encode("100","utf-8");
-                urlParameters+= "&"+URLEncoder.encode("username","utf-8")+"="+URLEncoder.encode("vipin","utf-8");
-                urlParameters+= "&"+URLEncoder.encode("password","utf-8")+"="+URLEncoder.encode("1234","utf-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-
+            String urlParameters = get_data_to_post();
             try {
 
                 // Manage Cookies
                 String cookieString="";
                 String csrftoken="";
 
-                URL url = new URL(strings[0]);
+                URL url = new URL(NEW_CSRF_TOKEN_URL);
                 HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
                 CookieManager cookieManager=io.getCookiesFromURLConnection(urlConnection);
                 List<HttpCookie> cookies=cookieManager.getCookieStore().getCookies();
@@ -131,15 +130,6 @@ public class ServerListnerActivity extends AppCompatActivity {
                 streamWriter.flush();
                 streamWriter.close();
                 int responseCode = urlConnection.getResponseCode();
-                response = io.readStream(urlConnection);
-
-            } catch (FileNotFoundException ex){
-                ex.printStackTrace();
-                try {
-                    response=io.readErrorStream(urlConnection);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
             } catch (IOException e) {
                 e.printStackTrace();
