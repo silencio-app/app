@@ -151,9 +151,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_task_home) {
 //            Intent intent = new Intent(this, TaskHomeActivity.class);
 //            startActivity(intent);
-        } else if (id == R.id.nav_profile) {
-//            Intent intent = new Intent(this, ProfileActivity.class);
-//            startActivity(intent);
+        } else if (id == R.id.nav_server) {
+            Intent intent = new Intent(this, ServerListnerActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_account_setting) {
 //            Intent intent = new Intent(this, SettingActivity.class);
 //            startActivity(intent);

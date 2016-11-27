@@ -7,7 +7,7 @@
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/explore_world" />
         <item
-            android:id="@+id/nav_profile"
+            android:id="@+id/nav_server"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/direct_teller" />
         <item
