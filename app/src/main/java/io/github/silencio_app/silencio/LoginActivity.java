@@ -1,9 +1,11 @@
 package io.github.silencio_app.silencio;
 
 import android.app.DownloadManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -31,11 +33,23 @@ public class LoginActivity extends AppCompatActivity {
     public static String USERNAME = "User name of User";
     private static String LOGIN_URL = "http://35.163.237.103/main/login/";
     private URL login_url;
+    private static final String PREFS_NAME = "SILENCIO_PREFS";
+    private static final String PREFS_FIRST_START_KEY = "isFirstStart";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        boolean isFirstStart = settings.getBoolean(PREFS_FIRST_START_KEY, true);
+        if (isFirstStart) {
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(PREFS_FIRST_START_KEY, false);
+            editor.commit();
+            Intent intent = new Intent(this, IntroActivity.class);
+            startActivity(intent);
+            finish();
+        }
         username_et = (EditText)findViewById(R.id.username_et);
         password_et = (EditText)findViewById(R.id.password_et);
 
