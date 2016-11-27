@@ -11,26 +11,29 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.CookieManager;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class ServerListnerActivity extends AppCompatActivity {
     private TextView data;
-    private static String LOGIN_URL = "http://vipin/silencio/";
-    private static String POST_URL = "http://vipin/silencio/post/";
+    private static String LOGIN_URL = "http://35.163.237.103/silencio/";
+    private static String POST_URL = "http://35.163.237.103/silencio/post/";
     private static String NEW_CSRF_TOKEN_URL = "http://vipin/silencio/get_new_cookie/";
     private ProgressDialog mDialog;
 
@@ -40,7 +43,16 @@ public class ServerListnerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_server_listner);
 
         data = (TextView)findViewById(R.id.data);
-        new GetDataTask().execute(LOGIN_URL);
+//        new GetDataTask().execute(LOGIN_URL);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("name", "Vipin");
+            jsonObject.put("class", 2014119);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        new PostData().execute(String.valueOf(jsonObject));
+
     }
 
     class GetDataTask extends AsyncTask<String, Void, JSONObject>{
@@ -51,6 +63,7 @@ public class ServerListnerActivity extends AppCompatActivity {
                 return downloadUrl(strings[0]);
             }
             catch (IOException | JSONException e){
+                Log.d("YEAH THATS IT", "OH YEAH GOT AN EXCEPTION");
                 e.printStackTrace();
             }
             return null;
@@ -91,63 +104,76 @@ public class ServerListnerActivity extends AppCompatActivity {
     }
     class PostData extends AsyncTask<String, Void, String>{
         @Override
-        protected String doInBackground(String... strings) {
-            String response="";
-            String urlParameters = get_data_to_post();
+        protected String doInBackground(String... strings)
+        {
+            String JsonResponse = null;
+            String JsonDATA = strings[0];
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
             try {
-
-                // Manage Cookies
-                String cookieString="";
-                String csrftoken="";
-
-                URL url = new URL(NEW_CSRF_TOKEN_URL);
-                HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
-                CookieManager cookieManager=io.getCookiesFromURLConnection(urlConnection);
-                List<HttpCookie> cookies=cookieManager.getCookieStore().getCookies();
-                Iterator<HttpCookie> cookieIterator=cookies.iterator();
-                while(cookieIterator.hasNext()){
-                    HttpCookie cookie=cookieIterator.next();
-                    cookieString+=cookie.getName()+"="+cookie.getValue()+";";
-
-                    if(cookie.getName().equals("csrftoken")){
-                        csrftoken=cookie.getValue();
-                    }
-                }
-
-
-                url= new URL(POST_URL);
-                urlConnection=(HttpURLConnection)url.openConnection();
-                urlConnection.setRequestMethod("POST");
+                URL url = new URL(POST_URL);
+                Log.d("DEBUGGER", url.getPath());
+                urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
+                // is output buffer writter
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                urlConnection.setRequestProperty("Accept", "application/x-www-form-urlencoded");
+                Writer writer = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8"));
+                String parameter = "&name=" + URLEncoder.encode("Sofa Room", "UTF-8") +
+                        "&db_level=" + URLEncoder.encode("58.5", "UTF-8");
+                writer.write(parameter);
+                writer.close();
+                Log.d("DEBUGGER", "CAME HERE"+urlConnection.getResponseCode());
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
 
-                urlConnection.setRequestProperty("X-CSRFToken", csrftoken);
-                urlConnection.setRequestProperty("Cookies", cookieString);
-
-                OutputStreamWriter streamWriter=new OutputStreamWriter(urlConnection.getOutputStream());
-
-                streamWriter.write(urlParameters);
-                streamWriter.flush();
-                streamWriter.close();
-                int responseCode = urlConnection.getResponseCode();
-
+                String inputLine;
+                while ((inputLine = reader.readLine()) != null)
+                    buffer.append(inputLine + "\n");
+                if (buffer.length() == 0) {
+                    // Stream was empty. No point in parsing.
+                    return null;
+                }
+                JsonResponse = buffer.toString();
+                Log.i("TAG RESPONSE",JsonResponse);
+                return JsonResponse;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return response;
+            finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("TAG RESPONSE", "Error closing stream", e);
+                    }
+                }
+            }
+            return null;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             mDialog = new ProgressDialog(ServerListnerActivity.this);
-            mDialog.setTitle("Logging In");
+            mDialog.setTitle("Posting data");
             mDialog.show();
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            mDialog.dismiss();
         }
     }
     private void doposting(String myurl) throws IOException, JSONException {
@@ -195,6 +221,7 @@ public class ServerListnerActivity extends AppCompatActivity {
             char[] buffer = new char[500];
             reader.read(buffer);
             String ans =  new String(buffer);
+            Log.d("LOGGING IT MOFOS", ans);
             JSONArray list = new JSONArray(ans);
             Log.d("LETS SEE", list.getJSONObject(0).getString("name"));
             return list.getJSONObject(0);
