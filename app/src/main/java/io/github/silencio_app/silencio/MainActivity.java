@@ -377,8 +377,16 @@ public class MainActivity extends AppCompatActivity
                                 InetAddress broadcast = interfaceAddress.getBroadcast();
                                 if (broadcast == null)
                                     continue;
-                                Log.d(" BROADCAST ", broadcast.toString());
-                                current_ip = broadcast.toString();
+                                String broadcastAddress = null;
+                                try {
+                                    if (broadcast.toString().substring(0,1).equals("/")) broadcastAddress = broadcast.toString().substring(1);
+                                    else broadcastAddress = broadcast.toString();
+                                }
+                                catch (NullPointerException e) {
+                                    e.printStackTrace();
+                                }
+                                Log.d(" BROADCAST ", broadcastAddress);
+                                current_ip = broadcastAddress;
                             }
                         }
                     } catch (SocketException e) {
