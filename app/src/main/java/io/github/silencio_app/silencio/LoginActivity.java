@@ -1,25 +1,22 @@
 package io.github.silencio_app.silencio;
 
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,16 +24,12 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText l_username_et;
-    private EditText l_password_et;
-    private EditText s_username_et;
-    private EditText s_password_et;
+    private EditText username_et;
+    private EditText password_et;
     private static final String USERNAME = "User name of user";
     private static final String LOGIN_URL = "http://35.163.237.103/silencio/login/";
     private static final String SIGNUP_URL = "http://35.163.237.103/silencio/signup/";
@@ -59,25 +52,47 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-        l_username_et = (EditText)findViewById(R.id.username_et);
-        l_password_et = (EditText)findViewById(R.id.password_et);
-        s_username_et = (EditText)findViewById(R.id.Susername_et);
-        s_password_et = (EditText)findViewById(R.id.Spassword_et);
+        username_et = (EditText)findViewById(R.id.username_et);
+        password_et = (EditText)findViewById(R.id.password_et);
     }
+
+    private boolean validateForm() {
+        boolean setError = false;
+        if (checkEmptySetError(username_et)) {
+            setError = true;
+        }
+        if (checkEmptySetError(password_et)) {
+            setError = true;
+        }
+        return setError;
+    }
+
+    private boolean checkEmptySetError(EditText editText){
+        String text = editText.getText().toString().trim();
+        if (TextUtils.isEmpty(text)) {
+            editText.setError("This field is required");
+            return true;
+        }
+        else return false;
+    }
+
+    public void hideSoftKeyboard(){
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
     public void login(View view){
-        username = l_username_et.getText().toString();
-        String password = l_password_et.getText().toString();
-        try {
-            String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
-                    "&password=" + URLEncoder.encode(password, "UTF-8");
-            if (!username.equals("") && !password.equals("")){
+        hideSoftKeyboard();
+        username = username_et.getText().toString();
+        String password = password_et.getText().toString();
+        if (!validateForm()) {
+            try {
+                String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
+                        "&password=" + URLEncoder.encode(password, "UTF-8");
                 new LoginTask().execute(encodedUrl);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
-            else{
-                // TODO Deal with blank input fields
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         }
     }
 
@@ -157,19 +172,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void signup(View view){
-        username = s_username_et.getText().toString();
-        String password = s_password_et.getText().toString();
-        try {
-            String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
-                    "&password=" + URLEncoder.encode(password, "UTF-8");
-            if (!username.equals("") && !password.equals("")){
+        hideSoftKeyboard();
+        username = username_et.getText().toString();
+        String password = password_et.getText().toString();
+        if (!validateForm()) {
+            try {
+                String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
+                        "&password=" + URLEncoder.encode(password, "UTF-8");
                 new SignupTask().execute(encodedUrl);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
-            else{
-                // TODO Deal with blank input fields
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         }
     }
     class SignupTask extends AsyncTask<String, Void, String>{
@@ -247,18 +260,49 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void makeDialog(Class<?> cls, Context context, String title, String message) {
+        final Intent intent = new Intent(context, cls);
+        if (cls == MainActivity.class) intent.putExtra(USERNAME, username);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+        builder.show();
+    };
+
     private void handle_login(String code) {
 
         if (code.equals("1")){
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(USERNAME, username);
             startActivity(intent);
+            finish();
         }
-        else if(code.equals("0")){
-            // TODO Deal with Invalid http method or any other server failure
+        else if (code.equals("2")){
+            makeDialog(LoginActivity.class, LoginActivity.this, "Login failed!", "The username " + username + " does not exist.");
         }
-        else {
-            // TODO Deal with Invalid username password
+        else if (code.equals("3")){
+            makeDialog(LoginActivity.class, LoginActivity.this, "Login failed!", "The password you entered is incorrect. Please correct the error.");
+        }
+        else if (code.equals("4")){
+            makeDialog(LoginActivity.class, LoginActivity.this, "Login failed!", "Server error. Kindly try after some time");
+        }
+        else if (code.equals("5")){
+            String msg = "You will now be logged in with your selected username " + username;
+            makeDialog(MainActivity.class, LoginActivity.this, "Registration successful!", msg);
+        }
+        else if (code.equals("6")){
+            makeDialog(LoginActivity.class, LoginActivity.this, "Registration failed!", "The username you entered already exists. Please select a different username.");
+        }
+        else if (code.equals("7")){
+            makeDialog(LoginActivity.class, LoginActivity.this, "Registration failed!", "Server error. Kindly try after some time.");
         }
     }
 
