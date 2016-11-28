@@ -67,15 +67,6 @@ public class ServerListnerActivity extends AppCompatActivity {
             recyclerView.setAdapter(mAdapter);
         }
 
-        /*JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("name", "Vipin");
-            jsonObject.put("class", 2014119);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-        /*new PostData().execute(String.valueOf(jsonObject));*/
-
     }
 
     @Override
