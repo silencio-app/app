@@ -5,16 +5,13 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.media.Image;
 import android.media.MediaRecorder;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,8 +25,6 @@ import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +36,11 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Formatter;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -359,18 +358,23 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(getApplicationContext(), " You are not connected to any access point", Toast.LENGTH_LONG).show();
                 }
                 else{
-                    // Connected to access point
-                    dhcpInfo = mWifiManager.getDhcpInfo();
-                    int gateway = dhcpInfo.gateway;
-                    String binary_string = Integer.toBinaryString(gateway);
-                    int len = binary_string.length();
-                    String oct1, oct2, oct3, oct4;
-                    oct1 = binary_string.substring(len - 8, len);
-                    oct2 = binary_string.substring(len - 16, len - 8);
-                    oct3 = binary_string.substring(len - 24, len - 16);
-                    oct4 = binary_string.substring(0, len - 24);
-                    Log.d(" MSG ", " =========== Connected to "+ Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2));
-                    current_ip = Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2);
+                    Enumeration<NetworkInterface> interfaces = null;
+                    try {
+                        interfaces = NetworkInterface.getNetworkInterfaces();
+                        while (interfaces.hasMoreElements()) {
+                            NetworkInterface networkInterface = interfaces.nextElement();
+                            if (networkInterface.isLoopback()) continue;
+                            for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
+                                InetAddress broadcast = interfaceAddress.getBroadcast();
+                                if (broadcast == null)
+                                    continue;
+                                Log.d(" BROADCAST ", broadcast.toString());
+                                current_ip = broadcast.toString();
+                            }
+                        }
+                    } catch (SocketException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             else{
