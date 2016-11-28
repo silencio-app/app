@@ -260,7 +260,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void makeDialog(Context context, String title, String message) {
+    private void makeDialog(Class<?> cls, Context context, String title, String message) {
+        final Intent intent = new Intent(context, cls);
+        if (cls == MainActivity.class) intent.putExtra(USERNAME, username);
         AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(message)
@@ -268,6 +270,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        startActivity(intent);
                         finish();
                     }
                 });
@@ -283,35 +286,23 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
         else if (code.equals("2")){
-            makeDialog(LoginActivity.this, "Login failed!", "The username : " + username + "does not exist.");
+            makeDialog(LoginActivity.class, LoginActivity.this, "Login failed!", "The username " + username + " does not exist.");
         }
         else if (code.equals("3")){
-            makeDialog(LoginActivity.this, "Login failed!", "The password you entered is incorrect. Please correct the error.");
+            makeDialog(LoginActivity.class, LoginActivity.this, "Login failed!", "The password you entered is incorrect. Please correct the error.");
         }
         else if (code.equals("4")){
-            makeDialog(LoginActivity.this, "Login failed!", "Server error. Kindly try after some time");
+            makeDialog(LoginActivity.class, LoginActivity.this, "Login failed!", "Server error. Kindly try after some time");
         }
         else if (code.equals("5")){
-            final Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(USERNAME, username);
-            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
-                    .setTitle("Registration successful!")
-                    .setMessage("You will now be logged in with your selected username : " + username)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            startActivity(intent);
-                            finish();
-                        }
-                    });
-            builder.show();
+            String msg = "You will now be logged in with your selected username " + username;
+            makeDialog(MainActivity.class, LoginActivity.this, "Registration successful!", msg);
         }
         else if (code.equals("6")){
-            makeDialog(LoginActivity.this, "Registration failed!", "The username you entered already exists. Please select a different username.");
+            makeDialog(LoginActivity.class, LoginActivity.this, "Registration failed!", "The username you entered already exists. Please select a different username.");
         }
         else if (code.equals("7")){
-            makeDialog(LoginActivity.this, "Registration failed!", "Server error. Kindly try after some time.");
+            makeDialog(LoginActivity.class, LoginActivity.this, "Registration failed!", "Server error. Kindly try after some time.");
         }
     }
 
