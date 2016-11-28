@@ -12,6 +12,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -343,6 +344,15 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(), "Cannot Write to External Now", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    public void makeSnackbar(String snackbarText) {
+        Snackbar.make(getWindow().getDecorView().getRootView(), snackbarText, Snackbar.LENGTH_LONG)
+                .setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {}
+                })
+                .show();
     }
 
     private class IPMapper implements Runnable{
