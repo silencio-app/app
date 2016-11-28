@@ -40,6 +40,9 @@ public class LoginActivity extends AppCompatActivity {
     private int RETURNED_LOGIN_FLAG;
     private static final String PREFS_NAME = "SILENCIO_PREFS";
     private static final String PREFS_FIRST_START_KEY = "isFirstStart";
+    private ProgressDialog mDialog;
+    private String username;
+    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,30 +64,16 @@ public class LoginActivity extends AppCompatActivity {
         // Show response on activity
     }
     public void login(View view){
-        String username;
         username = username_et.getText().toString();
-        String password;
         password = password_et.getText().toString();
         try {
             String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
                     "&password=" + URLEncoder.encode(password, "UTF-8");
             if (!username.equals("") && !password.equals("")){
                 new LoginTask().execute(encodedUrl);
-                switch (RETURNED_LOGIN_FLAG){
-                    case 1:
-                        Intent intent = new Intent(this, MainActivity.class);
-                        intent.putExtra(USERNAME, username);
-                        startActivity(intent);
-                        break;
-                    case 0:
-                        Log.d("MESSAGE", "INVALID METHOD");
-                        break;
-                    case -1:
-                        Log.d("MESSAGE", "USERname password invalid");
-                }
             }
             else{
-                // Deal with Blank fields
+                // TODO Deal with blank input fields
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -156,25 +145,31 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            mDialog = new ProgressDialog(LoginActivity.this);
+            mDialog.setTitle("Logging You In");
+            mDialog.show();
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             handle_login(s);
+            mDialog.dismiss();
         }
     }
 
     private void handle_login(String code) {
 
         if (code.equals("1")){
-            RETURNED_LOGIN_FLAG = 1;
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(USERNAME, username);
+            startActivity(intent);
         }
         else if(code.equals("0")){
-            RETURNED_LOGIN_FLAG = 0;
+            // TODO Deal with Invalid http method or any other server failure
         }
         else {
-            RETURNED_LOGIN_FLAG = -1;
+            // TODO Deal with Invalid username password
         }
     }
 
