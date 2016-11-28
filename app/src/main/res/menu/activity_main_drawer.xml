@@ -3,30 +3,17 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_task_home"
+            android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/explore_world" />
+            android:title="Noise level indicator" />
         <item
-            android:id="@+id/nav_server"
+            android:id="@+id/nav_map"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/direct_teller" />
+            android:title="Sound map" />
         <item
-            android:id="@+id/nav_account_setting"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Settings" />
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_menu_share"
+            android:title="Spread the word" />
     </group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
 
 </menu>

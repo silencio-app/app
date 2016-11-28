@@ -3,7 +3,6 @@ package io.github.silencio_app.silencio;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.media.MediaRecorder;
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     private WifiManager mWifiManager;
     private DhcpInfo dhcpInfo;
     private TextView current_location;
+    private TextView current_user;
 
     private String current_ip;
     private final String FILENAME = "myFingerprinting";
@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity
         loud_image = (ImageView)findViewById(R.id.loud_image);
         current_location = (TextView)findViewById(R.id.current_location);
         location_name = (EditText)findViewById(R.id.location_name);
+        current_user = (TextView) findViewById(R.id.disp_username);
 
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/Somatic-Rounded.otf");
         amplitude.setTypeface(custom_font);
@@ -135,6 +136,7 @@ public class MainActivity extends AppCompatActivity
         newT2.start();
 
         CURRENT_LOGGED_USER = getIntent().getExtras().getString("LOGGING USER");
+        current_user.setText(CURRENT_LOGGED_USER);
 
     }
     @Override
@@ -175,20 +177,9 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if (id == R.id.nav_task_home) {
-//            Intent intent = new Intent(this, TaskHomeActivity.class);
-//            startActivity(intent);
-        } else if (id == R.id.nav_server) {
-            Intent intent = new Intent(this, ServerListnerActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_account_setting) {
-//            Intent intent = new Intent(this, SettingActivity.class);
-//            startActivity(intent);
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
+        if (id == R.id.nav_home) {}
+        else if (id == R.id.nav_map) {}
+        else if (id == R.id.nav_share) {}
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
