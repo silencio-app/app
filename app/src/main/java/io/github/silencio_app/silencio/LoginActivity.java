@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import java.io.BufferedReader;
@@ -73,7 +74,13 @@ public class LoginActivity extends AppCompatActivity {
         else return false;
     }
 
+    public void hideSoftKeyboard(){
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
     public void login(View view){
+        hideSoftKeyboard();
         username = username_et.getText().toString();
         String password = password_et.getText().toString();
         if (!validateForm()) {
@@ -163,6 +170,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void signup(View view){
+        hideSoftKeyboard();
         username = username_et.getText().toString();
         String password = password_et.getText().toString();
         if (!validateForm()) {
