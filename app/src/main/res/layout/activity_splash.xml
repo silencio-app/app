@@ -11,7 +11,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="io.github.silencio_app.silencio.SplashActivity"
-    android:background="@color/colorBackground">
+    android:background="#34495E">
 
     <ImageView
         android:layout_width="wrap_content"
