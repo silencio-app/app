@@ -2,10 +2,10 @@ package io.github.silencio_app.silencio;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Typeface;
 import android.media.MediaRecorder;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
@@ -40,23 +40,22 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Formatter;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -113,6 +112,9 @@ public class MainActivity extends AppCompatActivity
         loud_image = (ImageView)findViewById(R.id.loud_image);
         current_location = (TextView)findViewById(R.id.current_location);
         location_name = (EditText)findViewById(R.id.location_name);
+
+        Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/Somatic-Rounded.otf");
+        amplitude.setTypeface(custom_font);
 
         /**
          *  Initialising the empty graph
@@ -201,13 +203,13 @@ public class MainActivity extends AppCompatActivity
             // If Mic is not running
             startMIC(view);
             PLAY_PAUSE_STATUS = true;
-            play_pause_button.setBackground(getResources().getDrawable(R.drawable.ic_menu_slideshow));
+            play_pause_button.setBackground(getResources().getDrawable(R.drawable.ic_pause_circle_filled_white_24dp));
         }
         else{
             // If Mic is running
             stopMIC(view);
             PLAY_PAUSE_STATUS = false;
-            play_pause_button.setBackground(getResources().getDrawable(R.drawable.ic_menu_send));
+            play_pause_button.setBackground(getResources().getDrawable(R.drawable.ic_play_circle_filled_white_24dp));
         }
 
     }
