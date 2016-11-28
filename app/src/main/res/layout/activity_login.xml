@@ -1,75 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="io.github.silencio_app.silencio.LoginActivity">
+    tools:context="io.github.silencio_app.silencio.LoginActivity"
+    android:gravity="center"
+    android:background="#34495E">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/username_et"
-        android:textAlignment="center"
-        android:hint="Enter Your Username"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="37dp"
-        android:layout_alignParentEnd="true" />
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/password_et"
-        android:textAlignment="center"
-        android:hint="Enter Your Password"
-        android:layout_below="@+id/username_et"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
-        android:layout_alignEnd="@+id/username_et" />
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/username_et"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter your username"
+            android:inputType="textPersonName|textNoSuggestions"
+            app:met_baseColor="@android:color/white"
+            app:met_primaryColor="@color/colorAccentSecondary"
+            app:met_textColor="@android:color/white"
+            app:met_errorColor="#FF0000"
+            app:met_underlineColor="@android:color/white"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="Username"
+            app:met_textColorHint="@android:color/white"
+            app:met_iconLeft="@drawable/ic_account_box_white_24dp"
+            app:met_iconPadding="20dp"/>
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:id="@+id/button"
-        android:onClick="login"
-        android:layout_below="@+id/password_et"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="33dp" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/Susername_et"
-        android:layout_centerVertical="true"
-        android:hint="Enter a username"
-        android:layout_alignEnd="@+id/password_et"
-        android:layout_alignParentStart="true" />
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:layout_marginTop="20dp"
+            android:id="@+id/password_et"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter your password"
+            android:inputType="textEmailAddress|textNoSuggestions"
+            app:met_baseColor="@android:color/white"
+            app:met_primaryColor="@color/colorAccentSecondary"
+            app:met_textColor="@android:color/white"
+            app:met_errorColor="#FF0000"
+            app:met_underlineColor="@android:color/white"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="Password"
+            app:met_textColorHint="@android:color/white"
+            app:met_iconLeft="@drawable/ic_lock_white_24dp"
+            app:met_iconPadding="20dp"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/Spassword_et"
-        android:layout_below="@+id/Susername_et"
-        android:hint="Enter a password"
-        android:layout_alignEnd="@+id/Susername_et"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"/>
+        <info.hoang8f.widget.FButton
+            android:id="@+id/button"
+            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_marginTop="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textColor="@android:color/white"
+            android:text="Login"
+            android:drawableLeft="@drawable/ic_person_white_24dp"
+            android:drawablePadding="20dp"
+            fbutton:buttonColor="#27ae60"
+            fbutton:shadowEnabled="true"
+            android:onClick="login"
+            android:layout_below="@+id/password_et"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button2"
-        android:layout_below="@+id/Spassword_et"
-        android:onClick="signup"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="44dp" />
+        <info.hoang8f.widget.FButton
+            android:id="@+id/button2"
+            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_marginTop="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textColor="@android:color/white"
+            android:text="Register"
+            android:drawableLeft="@drawable/ic_person_add_white_24dp"
+            android:drawablePadding="20dp"
+            android:onClick="signup"
+            fbutton:buttonColor="#F1C40F"
+            fbutton:shadowEnabled="true"/>
+    </LinearLayout>
 </RelativeLayout>
