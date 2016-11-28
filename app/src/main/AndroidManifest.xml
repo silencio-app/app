@@ -26,6 +26,13 @@
         <activity android:name=".LoginActivity"></activity>
         <activity android:name=".IntroActivity"></activity>
         <activity android:name=".ServerListnerActivity"></activity>
+        <activity android:name=".DetailedLocationActivity"
+            android:label="Screen Slide Location Activity"
+            android:parentActivityName=".ServerListnerActivity"
+            android:uiOptions="splitActionBarWhenNarrow">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ServerListnerActivity" />
+        </activity>
     </application>
 
 </manifest>

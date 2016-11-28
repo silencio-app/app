@@ -172,6 +172,14 @@ public class ServerListnerActivity extends AppCompatActivity {
         }
         locationList = locations;
     }
+
+    public void handle_card_click(View view){
+        int open_index = recyclerView.getChildAdapterPosition(view);
+        /*int open_index = mAdapter.item_position;*/
+        Intent intent = new Intent(ServerListnerActivity.this, DetailedLocationActivity.class);
+        intent.putExtra("open_index", open_index);
+        startActivity(intent);
+    }
     private String get_data_to_post(){
         String urlParameters = null;
         try {
