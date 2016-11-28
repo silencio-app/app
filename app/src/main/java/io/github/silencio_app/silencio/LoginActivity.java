@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -51,20 +52,38 @@ public class LoginActivity extends AppCompatActivity {
         username_et = (EditText)findViewById(R.id.username_et);
         password_et = (EditText)findViewById(R.id.password_et);
     }
+
+    private boolean validateForm() {
+        boolean setError = false;
+        if (checkEmptySetError(username_et)) {
+            setError = true;
+        }
+        if (checkEmptySetError(password_et)) {
+            setError = true;
+        }
+        return setError;
+    }
+
+    private boolean checkEmptySetError(EditText editText){
+        String text = editText.getText().toString().trim();
+        if (TextUtils.isEmpty(text)) {
+            editText.setError("This field is required");
+            return true;
+        }
+        else return false;
+    }
+
     public void login(View view){
         username = username_et.getText().toString();
         String password = password_et.getText().toString();
-        try {
-            String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
-                    "&password=" + URLEncoder.encode(password, "UTF-8");
-            if (!username.equals("") && !password.equals("")){
+        if (!validateForm()) {
+            try {
+                String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
+                        "&password=" + URLEncoder.encode(password, "UTF-8");
                 new LoginTask().execute(encodedUrl);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
-            else{
-                // TODO Deal with blank input fields
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         }
     }
 
@@ -146,17 +165,14 @@ public class LoginActivity extends AppCompatActivity {
     public void signup(View view){
         username = username_et.getText().toString();
         String password = password_et.getText().toString();
-        try {
-            String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
-                    "&password=" + URLEncoder.encode(password, "UTF-8");
-            if (!username.equals("") && !password.equals("")){
+        if (!validateForm()) {
+            try {
+                String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
+                        "&password=" + URLEncoder.encode(password, "UTF-8");
                 new SignupTask().execute(encodedUrl);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
-            else{
-                // TODO Deal with blank input fields
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         }
     }
     class SignupTask extends AsyncTask<String, Void, String>{
