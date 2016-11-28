@@ -33,8 +33,10 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText username_et;
-    private EditText password_et;
+    private EditText l_username_et;
+    private EditText l_password_et;
+    private EditText s_username_et;
+    private EditText s_password_et;
     private static final String USERNAME = "User name of user";
     private static final String LOGIN_URL = "http://35.163.237.103/silencio/login/";
     private static final String SIGNUP_URL = "http://35.163.237.103/silencio/signup/";
@@ -42,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
     private static final String PREFS_FIRST_START_KEY = "isFirstStart";
     private ProgressDialog mDialog;
     private String username;
-    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +59,14 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-        username_et = (EditText)findViewById(R.id.username_et);
-        password_et = (EditText)findViewById(R.id.password_et);
+        l_username_et = (EditText)findViewById(R.id.username_et);
+        l_password_et = (EditText)findViewById(R.id.password_et);
+        s_username_et = (EditText)findViewById(R.id.Susername_et);
+        s_password_et = (EditText)findViewById(R.id.Spassword_et);
     }
     public void login(View view){
-        username = username_et.getText().toString();
-        password = password_et.getText().toString();
+        username = l_username_et.getText().toString();
+        String password = l_password_et.getText().toString();
         try {
             String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
                     "&password=" + URLEncoder.encode(password, "UTF-8");
@@ -153,7 +156,22 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
+    public void signup(View view){
+        username = s_username_et.getText().toString();
+        String password = s_password_et.getText().toString();
+        try {
+            String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
+                    "&password=" + URLEncoder.encode(password, "UTF-8");
+            if (!username.equals("") && !password.equals("")){
+                new SignupTask().execute(encodedUrl);
+            }
+            else{
+                // TODO Deal with blank input fields
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
     class SignupTask extends AsyncTask<String, Void, String>{
         @Override
         protected String doInBackground(String... strings)
