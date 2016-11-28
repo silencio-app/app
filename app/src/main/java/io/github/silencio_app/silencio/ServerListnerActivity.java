@@ -1,11 +1,17 @@
 package io.github.silencio_app.silencio;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -28,42 +34,102 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class ServerListnerActivity extends AppCompatActivity {
     private TextView data;
     private static final String POST_URL = "http://35.163.237.103/silencio/post/";
+    private static final String GET_LOCATIONS_URL = "http://35.163.237.103/silencio/locations/";
+    public static ArrayList<Location> locationList = new ArrayList<>();
     private ProgressDialog mDialog;
     private RecyclerView recyclerView;
     public static LocationAdapter mAdapter;
+    private static final String PRE_FETCHED_LIST = "Pre Fetched Location List";
+    private String location_json_string;
+    ArrayList<String> colorList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_listner);
 
-        /*JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("name", "Vipin");
-            jsonObject.put("class", 2014119);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-        /*new PostData().execute(String.valueOf(jsonObject));*/
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        colorList = new ArrayList<>();
+        colorList.add("#9b59b6");
+        colorList.add("#f1c40f");
+        colorList.add("#2ecc71");
+        colorList.add("#3498d8");
+        colorList.add("#e74c3c");
+        colorList.add("#ec7e22");
+
+        colorList.add("#1abc9c");
+        colorList.add("#d35400");
+        colorList.add("#f39c12");
+
+
+
+        // TODO GET LIST OF LOCATION HERE
+        if (savedInstanceState == null){
+            new GetLocationTask().execute();
+        }
+        else{
+            location_json_string = savedInstanceState.getString(PRE_FETCHED_LIST, null);
+            json_to_list();
+            mAdapter = new LocationAdapter(locationList, colorList);
+            recyclerView.setAdapter(mAdapter);
+        }
 
     }
 
-    class GetDataTask extends AsyncTask<String, Void, JSONObject>{
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putString(PRE_FETCHED_LIST, location_json_string);
+    }
+
+    class GetLocationTask extends AsyncTask<String, Void, String>{
 
         @Override
-        protected JSONObject doInBackground(String... strings) {
-            try{
-                return downloadUrl(strings[0]);
-            }
-            catch (IOException | JSONException e){
-                Log.d("YEAH THATS IT", "OH YEAH GOT AN EXCEPTION");
+        protected String doInBackground(String... strings) {
+            InputStream inputStream = null;
+            try {
+                URL url = new URL(GET_LOCATIONS_URL);
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                connection.setReadTimeout(10000);
+                connection.setRequestMethod("GET");
+                connection.setDoInput(true);
+
+                int response = connection.getResponseCode();
+                inputStream = connection.getInputStream();
+
+                Reader reader = null;
+                reader = new InputStreamReader(inputStream, "UTF-8");
+                char[] buffer = new char[1000];
+                reader.read(buffer);
+                String ans =  new String(buffer);
+                Log.d("RESPONSE CODE", "******************* "+response);
+                Log.d("LETS SEE", ans);
+                JSONArray list = new JSONArray(ans);
+
+                return list.toString();
+            } catch (JSONException | MalformedURLException | UnsupportedEncodingException e) {
                 e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (inputStream != null){
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             return null;
         }
@@ -72,22 +138,47 @@ public class ServerListnerActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mDialog = new ProgressDialog(ServerListnerActivity.this);
-            mDialog.setTitle("Logging In");
+            mDialog.setTitle("Fetching data");
             mDialog.show();
         }
 
         @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            super.onPostExecute(jsonObject);
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            location_json_string = s;
+            json_to_list();
+            mAdapter = new LocationAdapter(locationList, colorList);
+            recyclerView.setAdapter(mAdapter);
+            mDialog.dismiss();
+        }
+    }
+
+    private void json_to_list(){
+        JSONArray list = null;
+        try {
+            list = new JSONArray(location_json_string);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ArrayList<Location> locations = new ArrayList<>();
+        for (int i=0;i<list.length();i++){
+            JSONObject jsonObject = null;
             try {
-                data.setText(jsonObject.getString("name"));
+                jsonObject = list.getJSONObject(i);
+                locations.add(new Location(jsonObject.getString("name"), Float.parseFloat(jsonObject.getString("db")), jsonObject.getString("mac")));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            mDialog.dismiss();
         }
+        locationList = locations;
+    }
 
-
+    public void handle_card_click(View view){
+        int open_index = recyclerView.getChildAdapterPosition(view);
+        /*int open_index = mAdapter.item_position;*/
+        Intent intent = new Intent(ServerListnerActivity.this, DetailedLocationActivity.class);
+        intent.putExtra("open_index", open_index);
+        startActivity(intent);
     }
     private String get_data_to_post(){
         String urlParameters = null;
@@ -204,7 +295,6 @@ public class ServerListnerActivity extends AppCompatActivity {
     }
     private JSONObject downloadUrl(String myurl) throws IOException, JSONException{
         InputStream inputStream = null;
-
         try {
             URL url = new URL(myurl);
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();

@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity
     private static final String POST_URL = "http://35.163.237.103/silencio/post/";
     private DateFormat dateFormat;
     private String CURRENT_LOGGED_USER;
+    private static String CURRENT_LOCATION = "Hostel";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,8 +104,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_home);
-
         amplitude = (TextView)findViewById(R.id.amp);
         play_pause_button = (Button)findViewById(R.id.play_pause_button);
         loud_image = (ImageView)findViewById(R.id.loud_image);
@@ -175,24 +175,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if (id == R.id.nav_home) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setCheckedItem(R.id.nav_home);
-        }
+        if (id == R.id.nav_home) {}
         else if (id == R.id.nav_map) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setCheckedItem(R.id.nav_map);
             Intent intent = new Intent(this, ServerListnerActivity.class);
             startActivity(intent);
-            finish();
         }
-        else if (id == R.id.nav_share) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setCheckedItem(R.id.nav_share);
-        }
+        else if (id == R.id.nav_share) {}
         else if (id == R.id.nav_logout) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setCheckedItem(R.id.nav_logout);
             CURRENT_LOGGED_USER = null;
             SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = settings.edit();
@@ -434,10 +423,10 @@ public class MainActivity extends AppCompatActivity
                             av_db += record.getDb_level();
                             String end_date = record.getDate();
                             av_db /= 100;
-                            NoiseRecordBundle noiseRecordBundle = new NoiseRecordBundle("Library", av_db, start_date, end_date);
+                            NoiseRecordBundle noiseRecordBundle = new NoiseRecordBundle(record.getPlace(), av_db, start_date, end_date);
                             try {
                                 String encodedUrl = "&username=" + URLEncoder.encode(CURRENT_LOGGED_USER, "UTF-8") +
-                                        "&place=" + URLEncoder.encode(noiseRecordBundle.getPlace(), "UTF-8") +
+                                        "&location=" + URLEncoder.encode(noiseRecordBundle.getPlace(), "UTF-8") +
                                         "&db_level=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getAvg_db()), "UTF-8") +
                                         "&start_time=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getStart()), "UTF-8") +
                                         "&end_time=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getEnd()), "UTF-8");
@@ -591,7 +580,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         series.appendData(new DataPoint(lastX++, amp_val), true, 100);
 
-                        NoiseRecord noiseRecord = new NoiseRecord("Library", (float)amp_val, dateFormat.format(new Date()));
+                        NoiseRecord noiseRecord = new NoiseRecord("Hostel", (float)amp_val, dateFormat.format(new Date()));
                         recordQueue.add(noiseRecord);
                     }
                 });
