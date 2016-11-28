@@ -27,7 +27,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
@@ -335,13 +334,13 @@ public class MainActivity extends AppCompatActivity
                 outputStream.write(current_ip.getBytes());
                 outputStream.write("\n".getBytes());
                 outputStream.close();
-                Toast.makeText(getApplicationContext(), "SAVED", Toast.LENGTH_SHORT).show();
+                makeSnackbar("Saved");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         else{
-            Toast.makeText(getApplicationContext(), "Cannot Write to External Now", Toast.LENGTH_SHORT).show();
+            makeSnackbar("Cannot write to external storage now");
         }
 
     }
@@ -365,7 +364,7 @@ public class MainActivity extends AppCompatActivity
                 WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
                 if (wifiInfo.getNetworkId() == -1){
                     // Not connected to an access point
-                    Toast.makeText(getApplicationContext(), " You are not connected to any access point", Toast.LENGTH_LONG).show();
+                    makeSnackbar("You are not connected to any access point");
                 }
                 else{
                     Enumeration<NetworkInterface> interfaces = null;
@@ -388,8 +387,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             else{
-
-                Toast.makeText(getApplicationContext(), " Wifi Not Enabled", Toast.LENGTH_LONG).show();
+                makeSnackbar("Wifi Not Enabled");
             }
         }
         @Override
