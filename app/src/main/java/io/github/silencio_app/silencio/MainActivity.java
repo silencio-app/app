@@ -182,6 +182,9 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.nav_map) {
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             navigationView.setCheckedItem(R.id.nav_map);
+            Intent intent = new Intent(this, ServerListnerActivity.class);
+            startActivity(intent);
+            finish();
         }
         else if (id == R.id.nav_share) {
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

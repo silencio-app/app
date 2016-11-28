@@ -9,13 +9,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="io.github.silencio_app.silencio.ServerListnerActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/data"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="76dp" />
+        android:scrollbars="vertical" />
 </RelativeLayout>

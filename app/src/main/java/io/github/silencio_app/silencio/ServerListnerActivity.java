@@ -32,9 +32,7 @@ import java.util.List;
 
 public class ServerListnerActivity extends AppCompatActivity {
     private TextView data;
-    private static String LOGIN_URL = "http://35.163.237.103/silencio/";
-    private static String POST_URL = "http://35.163.237.103/silencio/post/";
-    private static String NEW_CSRF_TOKEN_URL = "http://vipin/silencio/get_new_cookie/";
+    private static final String POST_URL = "http://35.163.237.103/silencio/post/";
     private ProgressDialog mDialog;
 
     @Override
@@ -42,8 +40,7 @@ public class ServerListnerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_listner);
 
-        data = (TextView)findViewById(R.id.data);
-//        new GetDataTask().execute(LOGIN_URL);
+
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("name", "Vipin");
