@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity
     private DateFormat dateFormat;
     private String CURRENT_LOGGED_USER;
     private static String CURRENT_LOCATION = "Hostel";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
