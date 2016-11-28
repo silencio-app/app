@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
@@ -28,12 +30,14 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class ServerListnerActivity extends AppCompatActivity {
     private TextView data;
     private static final String POST_URL = "http://35.163.237.103/silencio/post/";
+    public static List<Location> locationList = new ArrayList<>();
     private ProgressDialog mDialog;
     private RecyclerView recyclerView;
     public static LocationAdapter mAdapter;
@@ -42,6 +46,16 @@ public class ServerListnerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_listner);
+
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        // TODO GET LIST OF LOCATION HERE
+
+        mAdapter = new LocationAdapter(locationList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
 
         /*JSONObject jsonObject = new JSONObject();
         try {
@@ -54,17 +68,11 @@ public class ServerListnerActivity extends AppCompatActivity {
 
     }
 
-    class GetDataTask extends AsyncTask<String, Void, JSONObject>{
+    class GetLocationTask extends AsyncTask<String, Void, ArrayList<Location>>{
 
         @Override
-        protected JSONObject doInBackground(String... strings) {
-            try{
-                return downloadUrl(strings[0]);
-            }
-            catch (IOException | JSONException e){
-                Log.d("YEAH THATS IT", "OH YEAH GOT AN EXCEPTION");
-                e.printStackTrace();
-            }
+        protected ArrayList<Location> doInBackground(String... strings) {
+
             return null;
         }
 
@@ -77,13 +85,9 @@ public class ServerListnerActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            super.onPostExecute(jsonObject);
-            try {
-                data.setText(jsonObject.getString("name"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        protected void onPostExecute(ArrayList<Location> locationArrayList) {
+            super.onPostExecute(locationArrayList);
+            locationList = locationArrayList;
             mDialog.dismiss();
         }
 
