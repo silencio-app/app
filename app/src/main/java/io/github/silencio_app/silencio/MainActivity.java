@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity
     public Queue<NoiseRecord> recordQueue;
     private static final String POST_URL = "http://35.163.237.103/silencio/post/";
     private DateFormat dateFormat;
+    private String CURRENT_LOGGED_USER;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +109,6 @@ public class MainActivity extends AppCompatActivity
 
 
         amplitude = (TextView)findViewById(R.id.amp);
-//        db_meter = (ProgressBar)findViewById(R.id.db_meter);
         play_pause_button = (Button)findViewById(R.id.play_pause_button);
         loud_image = (ImageView)findViewById(R.id.loud_image);
         current_location = (TextView)findViewById(R.id.current_location);
@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity
         Thread newT2 = new Thread(new IPMapper());  // New Thread is created to handle the amplitude fetching and plotting graph
         newT2.start();
 
+        CURRENT_LOGGED_USER = getIntent().getExtras().getString("LOGGING USER");
 
     }
     @Override
@@ -413,7 +414,7 @@ public class MainActivity extends AppCompatActivity
                             NoiseRecord record = recordQueue.remove();
                             av_db += record.getDb_level();
                             String start_date = record.getDate();
-                            for(int i=0;i<18;i++){
+                            for(int i=0;i<98;i++){
                                 av_db += recordQueue.remove().getDb_level();
                             }
                             record = recordQueue.remove();
@@ -422,7 +423,7 @@ public class MainActivity extends AppCompatActivity
                             av_db /= 20;
                             NoiseRecordBundle noiseRecordBundle = new NoiseRecordBundle("Library", av_db, start_date, end_date);
                             try {
-                                String encodedUrl = "&username=" + URLEncoder.encode("a", "UTF-8") +
+                                String encodedUrl = "&username=" + URLEncoder.encode(CURRENT_LOGGED_USER, "UTF-8") +
                                         "&place=" + URLEncoder.encode(noiseRecordBundle.getPlace(), "UTF-8") +
                                         "&db_level=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getAvg_db()), "UTF-8") +
                                         "&start_time=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getStart()), "UTF-8") +

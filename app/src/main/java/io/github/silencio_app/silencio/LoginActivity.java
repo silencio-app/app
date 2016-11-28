@@ -37,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText l_password_et;
     private EditText s_username_et;
     private EditText s_password_et;
-    private static final String USERNAME = "User name of user";
+    private static final String USERNAME = "LOGGING USER";
     private static final String LOGIN_URL = "http://35.163.237.103/silencio/login/";
     private static final String SIGNUP_URL = "http://35.163.237.103/silencio/signup/";
     private static final String PREFS_NAME = "SILENCIO_PREFS";
