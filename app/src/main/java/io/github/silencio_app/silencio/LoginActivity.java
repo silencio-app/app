@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -38,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String PREFS_CURRENT_USER = "currentUser";
     private ProgressDialog mDialog;
     private String username;
+    private WifiManager mWifiManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +96,15 @@ public class LoginActivity extends AppCompatActivity {
         inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
+    public void makeSnackbar(String snackbarText) {
+        Snackbar.make(getWindow().getDecorView().getRootView(), snackbarText, Snackbar.LENGTH_LONG)
+                .setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {}
+                })
+                .show();
+    }
+
     public void login(View view){
         hideSoftKeyboard();
         username = username_et.getText().toString();
@@ -100,7 +113,19 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
                         "&password=" + URLEncoder.encode(password, "UTF-8");
-                new LoginTask().execute(encodedUrl);
+                mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                if(mWifiManager.isWifiEnabled()){
+                    WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                    if (wifiInfo.getNetworkId() == -1){
+                        makeSnackbar("You are not connected to any access point");
+                    }
+                    else{
+                        new LoginTask().execute(encodedUrl);
+                    }
+                }
+                else{
+                    makeSnackbar("WiFi not enabled");
+                }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -190,7 +215,19 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
                         "&password=" + URLEncoder.encode(password, "UTF-8");
-                new SignupTask().execute(encodedUrl);
+                mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                if(mWifiManager.isWifiEnabled()){
+                    WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                    if (wifiInfo.getNetworkId() == -1){
+                        makeSnackbar("You are not connected to any access point");
+                    }
+                    else{
+                        new SignupTask().execute(encodedUrl);
+                    }
+                }
+                else{
+                    makeSnackbar("WiFi not enabled");
+                }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
