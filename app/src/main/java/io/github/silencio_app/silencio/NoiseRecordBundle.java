@@ -1,20 +1,15 @@
 package io.github.silencio_app.silencio;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * Created by vipin on 28/11/16.
  */
 public class NoiseRecordBundle {
     private String place;
     private float avg_db;
-    private Date start;
-    private Date end;
-    private static final String DATETIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
+    private String start;
+    private String end;
 
-    public NoiseRecordBundle(float avg_db, Date end, String place, Date start) {
+    public NoiseRecordBundle(String place, float avg_db, String start, String end) {
         this.avg_db = avg_db;
         this.end = end;
         this.place = place;
@@ -29,11 +24,11 @@ public class NoiseRecordBundle {
         this.avg_db = avg_db;
     }
 
-    public Date getEnd() {
+    public String getEnd() {
         return end;
     }
 
-    public void setEnd(Date end) {
+    public void setEnd(String end) {
         this.end = end;
     }
 
@@ -45,11 +40,11 @@ public class NoiseRecordBundle {
         this.place = place;
     }
 
-    public Date getStart() {
+    public String getStart() {
         return start;
     }
 
-    public void setStart(Date start) {
+    public void setStart(String start) {
         this.start = start;
     }
 }

@@ -68,8 +68,8 @@ public class LoginActivity extends AppCompatActivity {
         username = l_username_et.getText().toString();
         String password = l_password_et.getText().toString();
         try {
-            String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
-                    "&password=" + URLEncoder.encode(password, "UTF-8");
+                String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
+                        "&password=" + URLEncoder.encode(password, "UTF-8");
             if (!username.equals("") && !password.equals("")){
                 new LoginTask().execute(encodedUrl);
             }

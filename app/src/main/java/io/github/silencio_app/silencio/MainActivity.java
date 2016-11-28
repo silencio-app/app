@@ -2,6 +2,7 @@ package io.github.silencio_app.silencio;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -10,6 +11,7 @@ import android.media.MediaRecorder;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -38,10 +40,25 @@ import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Formatter;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -68,7 +85,11 @@ public class MainActivity extends AppCompatActivity
     private final String FILENAME = "myFingerprinting";
     private EditText location_name;
     private boolean canR, canW;
+    private static final String DATETIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
+    public Queue<NoiseRecord> recordQueue;
+    private static final String POST_URL = "http://35.163.237.103/silencio/post/";
+    private DateFormat dateFormat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +127,8 @@ public class MainActivity extends AppCompatActivity
         viewport.setMaxX(100);  // 10 units frame
         viewport.setScalable(true); // auto scroll to right
 
+        recordQueue = new LinkedList<NoiseRecord>();
+        dateFormat = new SimpleDateFormat(DATETIME_FORMAT);
         Thread newT2 = new Thread(new IPMapper());  // New Thread is created to handle the amplitude fetching and plotting graph
         newT2.start();
 
@@ -384,19 +407,120 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        float av_db = 0;
+
+                        if(recordQueue.size() > 100){
+                            NoiseRecord record = recordQueue.remove();
+                            av_db += record.getDb_level();
+                            String start_date = record.getDate();
+                            for(int i=0;i<18;i++){
+                                av_db += recordQueue.remove().getDb_level();
+                            }
+                            record = recordQueue.remove();
+                            av_db += record.getDb_level();
+                            String end_date = record.getDate();
+                            av_db /= 20;
+                            NoiseRecordBundle noiseRecordBundle = new NoiseRecordBundle("Library", av_db, start_date, end_date);
+                            try {
+                                String encodedUrl = "&username=" + URLEncoder.encode("a", "UTF-8") +
+                                        "&place=" + URLEncoder.encode(noiseRecordBundle.getPlace(), "UTF-8") +
+                                        "&db_level=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getAvg_db()), "UTF-8") +
+                                        "&start_time=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getStart()), "UTF-8") +
+                                        "&end_time=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getEnd()), "UTF-8");
+                                new PostTask().execute(encodedUrl);
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         get_gateway_ip();
                         current_location.setText(current_ip);
                     }
                 });
                 try {
                     // Sleep for 600 ms for next value
-                    Thread.sleep(3000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
     }
+    class PostTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings)
+        {
+            String parameter = strings[0];
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            try {
+
+                URL url = new URL(POST_URL);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                urlConnection.setRequestProperty("Accept", "application/x-www-form-urlencoded");
+
+                Writer writer = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8"));
+                writer.write(parameter);
+                writer.close();
+                int response_code = urlConnection.getResponseCode();
+                Log.d("DEBUGGER", "****************** RESPONSE CODE = "+response_code);
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    return null;
+                }
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+                String inputLine;
+                while ((inputLine = reader.readLine()) != null)
+                    buffer.append(inputLine);
+                if (buffer.length() == 0) {
+                    // Stream was empty. No point in parsing.
+                    return null;
+                }
+                String return_value = buffer.toString();
+                Log.d("RETURN", return_value);
+                return return_value;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("TAG RESPONSE", "Error closing stream", e);
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            /*mDialog = new ProgressDialog(LoginActivity.this);
+            mDialog.setTitle("Signing You In");
+            mDialog.show();*/
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            /*handle_login(s);
+            mDialog.dismiss();*/
+        }
+    }
+
     /**
      * private class for fetching amplitude and mapping graph
      */
@@ -452,6 +576,9 @@ public class MainActivity extends AppCompatActivity
 //                            db_meter.setProgressDrawable(getDrawable(R.drawable.redprogress));
                         }
                         series.appendData(new DataPoint(lastX++, amp_val), true, 100);
+
+                        NoiseRecord noiseRecord = new NoiseRecord("Library", (float)amp_val, dateFormat.format(new Date()));
+                        recordQueue.add(noiseRecord);
                     }
                 });
                 Log.d(MSG, " === AMPLITUDE === "+ amp_val_string);
