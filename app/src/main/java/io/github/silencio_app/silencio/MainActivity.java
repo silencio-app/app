@@ -3,6 +3,8 @@ package io.github.silencio_app.silencio;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.media.MediaRecorder;
@@ -51,6 +53,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import static io.github.silencio_app.silencio.LoginActivity.PREFS_CURRENT_USER;
+import static io.github.silencio_app.silencio.LoginActivity.PREFS_NAME;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -127,6 +132,10 @@ public class MainActivity extends AppCompatActivity
         newT2.start();
 
         CURRENT_LOGGED_USER = getIntent().getExtras().getString("LOGGING USER");
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(PREFS_CURRENT_USER, CURRENT_LOGGED_USER);
+        editor.commit();
     }
     @Override
     public void onBackPressed() {
@@ -177,6 +186,18 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.nav_share) {
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             navigationView.setCheckedItem(R.id.nav_share);
+        }
+        else if (id == R.id.nav_logout) {
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setCheckedItem(R.id.nav_logout);
+            CURRENT_LOGGED_USER = null;
+            SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.remove(PREFS_CURRENT_USER);
+            editor.commit();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

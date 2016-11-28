@@ -33,8 +33,9 @@ public class LoginActivity extends AppCompatActivity {
     private static final String USERNAME = "LOGGING USER";
     private static final String LOGIN_URL = "http://35.163.237.103/silencio/login/";
     private static final String SIGNUP_URL = "http://35.163.237.103/silencio/signup/";
-    private static final String PREFS_NAME = "SILENCIO_PREFS";
-    private static final String PREFS_FIRST_START_KEY = "isFirstStart";
+    public static final String PREFS_NAME = "SILENCIO_PREFS";
+    public static final String PREFS_FIRST_START_KEY = "isFirstStart";
+    public static final String PREFS_CURRENT_USER = "currentUser";
     private ProgressDialog mDialog;
     private String username;
 
@@ -51,6 +52,16 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(this, IntroActivity.class);
             startActivity(intent);
             finish();
+        }
+        else {
+            String current_user = settings.getString(PREFS_CURRENT_USER, null);
+            if (current_user != null) {
+                username = current_user;
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra(USERNAME, username);
+                startActivity(intent);
+                finish();
+            }
         }
         username_et = (EditText)findViewById(R.id.username_et);
         password_et = (EditText)findViewById(R.id.password_et);
