@@ -58,14 +58,13 @@
                 android:layout_marginTop="25dp"
                 android:textStyle="bold"
                 android:textColor="@color/colorWhite"
-                android:layout_marginStart="25dp"
+                android:layout_marginStart="20dp"
                 android:layout_below="@+id/sound_label"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="192.168.160.11"
                 android:id="@+id/current_location"
                 android:textColor="@color/colorWhite"
                 android:textStyle="bold"
@@ -77,8 +76,8 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:background="@drawable/ic_menu_camera"
-                android:layout_toRightOf="@+id/current_location"
-                android:layout_marginLeft="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
                 android:onClick="bind_ip_value_to_location"
                 android:layout_alignBottom="@+id/location_label"/>
 
