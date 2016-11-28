@@ -5,14 +5,12 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.media.Image;
 import android.media.MediaRecorder;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -28,10 +26,7 @@ import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
@@ -41,7 +36,11 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Formatter;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -335,15 +334,24 @@ public class MainActivity extends AppCompatActivity
                 outputStream.write(current_ip.getBytes());
                 outputStream.write("\n".getBytes());
                 outputStream.close();
-                Toast.makeText(getApplicationContext(), "SAVED", Toast.LENGTH_SHORT).show();
+                makeSnackbar("Saved");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         else{
-            Toast.makeText(getApplicationContext(), "Cannot Write to External Now", Toast.LENGTH_SHORT).show();
+            makeSnackbar("Cannot write to external storage now");
         }
 
+    }
+
+    public void makeSnackbar(String snackbarText) {
+        Snackbar.make(getWindow().getDecorView().getRootView(), snackbarText, Snackbar.LENGTH_LONG)
+                .setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {}
+                })
+                .show();
     }
 
     private class IPMapper implements Runnable{
@@ -356,26 +364,38 @@ public class MainActivity extends AppCompatActivity
                 WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
                 if (wifiInfo.getNetworkId() == -1){
                     // Not connected to an access point
-                    Toast.makeText(getApplicationContext(), " You are not connected to any access point", Toast.LENGTH_LONG).show();
+                    makeSnackbar("You are not connected to any access point");
                 }
                 else{
-                    // Connected to access point
-                    dhcpInfo = mWifiManager.getDhcpInfo();
-                    int gateway = dhcpInfo.gateway;
-                    String binary_string = Integer.toBinaryString(gateway);
-                    int len = binary_string.length();
-                    String oct1, oct2, oct3, oct4;
-                    oct1 = binary_string.substring(len - 8, len);
-                    oct2 = binary_string.substring(len - 16, len - 8);
-                    oct3 = binary_string.substring(len - 24, len - 16);
-                    oct4 = binary_string.substring(0, len - 24);
-                    Log.d(" MSG ", " =========== Connected to "+ Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2));
-                    current_ip = Integer.parseInt(oct1, 2) +"."+ Integer.parseInt(oct2, 2) + "."+Integer.parseInt(oct3, 2)+"."+Integer.parseInt(oct4, 2);
+                    Enumeration<NetworkInterface> interfaces = null;
+                    try {
+                        interfaces = NetworkInterface.getNetworkInterfaces();
+                        while (interfaces.hasMoreElements()) {
+                            NetworkInterface networkInterface = interfaces.nextElement();
+                            if (networkInterface.isLoopback()) continue;
+                            for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
+                                InetAddress broadcast = interfaceAddress.getBroadcast();
+                                if (broadcast == null)
+                                    continue;
+                                String broadcastAddress = null;
+                                try {
+                                    if (broadcast.toString().substring(0,1).equals("/")) broadcastAddress = broadcast.toString().substring(1);
+                                    else broadcastAddress = broadcast.toString();
+                                }
+                                catch (NullPointerException e) {
+                                    e.printStackTrace();
+                                }
+                                Log.d(" BROADCAST ", broadcastAddress);
+                                current_ip = broadcastAddress;
+                            }
+                        }
+                    } catch (SocketException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             else{
-
-                Toast.makeText(getApplicationContext(), " Wifi Not Enabled", Toast.LENGTH_LONG).show();
+                makeSnackbar("Wifi Not Enabled");
             }
         }
         @Override
