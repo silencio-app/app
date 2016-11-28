@@ -2,6 +2,8 @@ package io.github.silencio_app.silencio;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -38,10 +40,12 @@ public class ServerListnerActivity extends AppCompatActivity {
     private TextView data;
     private static final String POST_URL = "http://35.163.237.103/silencio/post/";
     private static final String GET_LOCATIONS_URL = "http://35.163.237.103/silencio/locations/";
-    public static List<Location> locationList = new ArrayList<>();
+    public static ArrayList<Location> locationList = new ArrayList<>();
     private ProgressDialog mDialog;
     private RecyclerView recyclerView;
     public static LocationAdapter mAdapter;
+    private static final String PRE_FETCHED_LIST = "Pre Fetched Location List";
+    private String location_json_string;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +53,19 @@ public class ServerListnerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_server_listner);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        new GetLocationTask().execute();
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         // TODO GET LIST OF LOCATION HERE
-
+        if (savedInstanceState == null){
+            new GetLocationTask().execute();
+        }
+        else{
+            location_json_string = savedInstanceState.getString(PRE_FETCHED_LIST, null);
+            json_to_list();
+            mAdapter = new LocationAdapter(locationList);
+            recyclerView.setAdapter(mAdapter);
+        }
 
         /*JSONObject jsonObject = new JSONObject();
         try {
@@ -64,11 +78,17 @@ public class ServerListnerActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
 
-    class GetLocationTask extends AsyncTask<String, Void, ArrayList<Location>>{
+        savedInstanceState.putString(PRE_FETCHED_LIST, location_json_string);
+    }
+
+    class GetLocationTask extends AsyncTask<String, Void, String>{
 
         @Override
-        protected ArrayList<Location> doInBackground(String... strings) {
+        protected String doInBackground(String... strings) {
             InputStream inputStream = null;
             try {
                 URL url = new URL(GET_LOCATIONS_URL);
@@ -88,12 +108,8 @@ public class ServerListnerActivity extends AppCompatActivity {
                 Log.d("RESPONSE CODE", "******************* "+response);
                 Log.d("LETS SEE", ans);
                 JSONArray list = new JSONArray(ans);
-                ArrayList<Location> locations = new ArrayList<>();
-                for (int i=0;i<list.length();i++){
-                    JSONObject jsonObject = list.getJSONObject(i);
-                    locations.add(new Location(jsonObject.getString("name"), Float.parseFloat(jsonObject.getString("db")), jsonObject.getString("mac")));
-                }
-                return locations;
+
+                return list.toString();
             } catch (JSONException | MalformedURLException | UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -119,18 +135,34 @@ public class ServerListnerActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Location> locationArrayList) {
-            super.onPostExecute(locationArrayList);
-            locationList = locationArrayList;
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            location_json_string = s;
+            json_to_list();
             mAdapter = new LocationAdapter(locationList);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-            recyclerView.setLayoutManager(mLayoutManager);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setAdapter(mAdapter);
             mDialog.dismiss();
         }
+    }
 
-
+    private void json_to_list(){
+        JSONArray list = null;
+        try {
+            list = new JSONArray(location_json_string);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ArrayList<Location> locations = new ArrayList<>();
+        for (int i=0;i<list.length();i++){
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = list.getJSONObject(i);
+                locations.add(new Location(jsonObject.getString("name"), Float.parseFloat(jsonObject.getString("db")), jsonObject.getString("mac")));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        locationList = locations;
     }
     private String get_data_to_post(){
         String urlParameters = null;
