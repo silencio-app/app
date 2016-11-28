@@ -60,8 +60,6 @@ public class LoginActivity extends AppCompatActivity {
         }
         username_et = (EditText)findViewById(R.id.username_et);
         password_et = (EditText)findViewById(R.id.password_et);
-
-        // Show response on activity
     }
     public void login(View view){
         username = username_et.getText().toString();
@@ -78,9 +76,6 @@ public class LoginActivity extends AppCompatActivity {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-    }
-    public void data() throws JSONException {
-
     }
 
     class LoginTask extends AsyncTask<String, Void, String>{
@@ -147,6 +142,82 @@ public class LoginActivity extends AppCompatActivity {
             super.onPreExecute();
             mDialog = new ProgressDialog(LoginActivity.this);
             mDialog.setTitle("Logging You In");
+            mDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            handle_login(s);
+            mDialog.dismiss();
+        }
+    }
+
+
+    class SignupTask extends AsyncTask<String, Void, String>{
+        @Override
+        protected String doInBackground(String... strings)
+        {
+            String parameter = strings[0];
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            try {
+
+                URL url = new URL(SIGNUP_URL);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                urlConnection.setRequestProperty("Accept", "application/x-www-form-urlencoded");
+
+                Writer writer = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8"));
+                writer.write(parameter);
+                writer.close();
+                int response_code = urlConnection.getResponseCode();
+                Log.d("DEBUGGER", "****************** RESPONSE CODE = "+response_code);
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    return null;
+                }
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+                String inputLine;
+                while ((inputLine = reader.readLine()) != null)
+                    buffer.append(inputLine);
+                if (buffer.length() == 0) {
+                    // Stream was empty. No point in parsing.
+                    return null;
+                }
+                String return_value = buffer.toString();
+                return return_value;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("TAG RESPONSE", "Error closing stream", e);
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mDialog = new ProgressDialog(LoginActivity.this);
+            mDialog.setTitle("Signing You In");
             mDialog.show();
         }
 
