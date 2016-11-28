@@ -159,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mDialog = new ProgressDialog(LoginActivity.this);
-            mDialog.setTitle("Logging you in");
+            mDialog.setMessage("Logging you in");
             mDialog.show();
         }
 
@@ -248,7 +248,7 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mDialog = new ProgressDialog(LoginActivity.this);
-            mDialog.setTitle("Registering you on our server");
+            mDialog.setMessage("Registering you on our server");
             mDialog.show();
         }
 
