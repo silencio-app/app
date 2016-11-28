@@ -1,25 +1,18 @@
 package io.github.silencio_app.silencio;
 
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,16 +20,12 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText l_username_et;
-    private EditText l_password_et;
-    private EditText s_username_et;
-    private EditText s_password_et;
+    private EditText username_et;
+    private EditText password_et;
     private static final String USERNAME = "User name of user";
     private static final String LOGIN_URL = "http://35.163.237.103/silencio/login/";
     private static final String SIGNUP_URL = "http://35.163.237.103/silencio/signup/";
@@ -59,14 +48,12 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-        l_username_et = (EditText)findViewById(R.id.username_et);
-        l_password_et = (EditText)findViewById(R.id.password_et);
-        s_username_et = (EditText)findViewById(R.id.Susername_et);
-        s_password_et = (EditText)findViewById(R.id.Spassword_et);
+        username_et = (EditText)findViewById(R.id.username_et);
+        password_et = (EditText)findViewById(R.id.password_et);
     }
     public void login(View view){
-        username = l_username_et.getText().toString();
-        String password = l_password_et.getText().toString();
+        username = username_et.getText().toString();
+        String password = password_et.getText().toString();
         try {
             String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
                     "&password=" + URLEncoder.encode(password, "UTF-8");
@@ -157,8 +144,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void signup(View view){
-        username = s_username_et.getText().toString();
-        String password = s_password_et.getText().toString();
+        username = username_et.getText().toString();
+        String password = password_et.getText().toString();
         try {
             String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
                     "&password=" + URLEncoder.encode(password, "UTF-8");
