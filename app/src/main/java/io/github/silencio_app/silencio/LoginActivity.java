@@ -264,6 +264,7 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(USERNAME, username);
             startActivity(intent);
+            finish();
         }
         else if(code.equals("0")){
             // TODO Deal with Invalid http method or any other server failure
