@@ -46,6 +46,7 @@ public class ServerListnerActivity extends AppCompatActivity {
     public static LocationAdapter mAdapter;
     private static final String PRE_FETCHED_LIST = "Pre Fetched Location List";
     private String location_json_string;
+    ArrayList<String> colorList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,20 @@ public class ServerListnerActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        colorList = new ArrayList<>();
+        colorList.add("#9b59b6");
+        colorList.add("#f1c40f");
+        colorList.add("#2ecc71");
+        colorList.add("#3498d8");
+        colorList.add("#e74c3c");
+        colorList.add("#ec7e22");
+
+        colorList.add("#1abc9c");
+        colorList.add("#d35400");
+        colorList.add("#f39c12");
+
+
+
         // TODO GET LIST OF LOCATION HERE
         if (savedInstanceState == null){
             new GetLocationTask().execute();
@@ -63,7 +78,7 @@ public class ServerListnerActivity extends AppCompatActivity {
         else{
             location_json_string = savedInstanceState.getString(PRE_FETCHED_LIST, null);
             json_to_list();
-            mAdapter = new LocationAdapter(locationList);
+            mAdapter = new LocationAdapter(locationList, colorList);
             recyclerView.setAdapter(mAdapter);
         }
 
@@ -130,7 +145,7 @@ public class ServerListnerActivity extends AppCompatActivity {
             super.onPostExecute(s);
             location_json_string = s;
             json_to_list();
-            mAdapter = new LocationAdapter(locationList);
+            mAdapter = new LocationAdapter(locationList, colorList);
             recyclerView.setAdapter(mAdapter);
             mDialog.dismiss();
         }

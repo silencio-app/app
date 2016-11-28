@@ -7,6 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#34495e"
     tools:context="io.github.silencio_app.silencio.ServerListnerActivity">
 
     <android.support.v7.widget.RecyclerView
