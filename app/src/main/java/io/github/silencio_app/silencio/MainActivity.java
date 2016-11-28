@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity
                             record = recordQueue.remove();
                             av_db += record.getDb_level();
                             String end_date = record.getDate();
-                            av_db /= 20;
+                            av_db /= 100;
                             NoiseRecordBundle noiseRecordBundle = new NoiseRecordBundle("Library", av_db, start_date, end_date);
                             try {
                                 String encodedUrl = "&username=" + URLEncoder.encode(CURRENT_LOGGED_USER, "UTF-8") +

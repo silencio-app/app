@@ -30,7 +30,7 @@ import java.net.URLEncoder;
 public class LoginActivity extends AppCompatActivity {
     private EditText username_et;
     private EditText password_et;
-    private static final String USERNAME = "User name of user";
+    private static final String USERNAME = "LOGGING USER";
     private static final String LOGIN_URL = "http://35.163.237.103/silencio/login/";
     private static final String SIGNUP_URL = "http://35.163.237.103/silencio/signup/";
     private static final String PREFS_NAME = "SILENCIO_PREFS";
