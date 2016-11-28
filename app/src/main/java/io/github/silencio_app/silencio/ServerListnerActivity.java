@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -34,21 +35,22 @@ public class ServerListnerActivity extends AppCompatActivity {
     private TextView data;
     private static final String POST_URL = "http://35.163.237.103/silencio/post/";
     private ProgressDialog mDialog;
+    private RecyclerView recyclerView;
+    public static LocationAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_listner);
 
-
-        JSONObject jsonObject = new JSONObject();
+        /*JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("name", "Vipin");
             jsonObject.put("class", 2014119);
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-        new PostData().execute(String.valueOf(jsonObject));
+        }*/
+        /*new PostData().execute(String.valueOf(jsonObject));*/
 
     }
 
