@@ -37,6 +37,7 @@ import java.util.List;
 public class ServerListnerActivity extends AppCompatActivity {
     private TextView data;
     private static final String POST_URL = "http://35.163.237.103/silencio/post/";
+    private static final String GET_LOCATIONS_URL = "http://35.163.237.103/silencio/locations/";
     public static List<Location> locationList = new ArrayList<>();
     private ProgressDialog mDialog;
     private RecyclerView recyclerView;
@@ -48,14 +49,9 @@ public class ServerListnerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_server_listner);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
+        new GetLocationTask().execute();
         // TODO GET LIST OF LOCATION HERE
 
-        mAdapter = new LocationAdapter(locationList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
 
         /*JSONObject jsonObject = new JSONObject();
         try {
@@ -68,11 +64,49 @@ public class ServerListnerActivity extends AppCompatActivity {
 
     }
 
+
     class GetLocationTask extends AsyncTask<String, Void, ArrayList<Location>>{
 
         @Override
         protected ArrayList<Location> doInBackground(String... strings) {
+            InputStream inputStream = null;
+            try {
+                URL url = new URL(GET_LOCATIONS_URL);
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                connection.setReadTimeout(10000);
+                connection.setRequestMethod("GET");
+                connection.setDoInput(true);
 
+                int response = connection.getResponseCode();
+                inputStream = connection.getInputStream();
+
+                Reader reader = null;
+                reader = new InputStreamReader(inputStream, "UTF-8");
+                char[] buffer = new char[1000];
+                reader.read(buffer);
+                String ans =  new String(buffer);
+                Log.d("RESPONSE CODE", "******************* "+response);
+                Log.d("LETS SEE", ans);
+                JSONArray list = new JSONArray(ans);
+                ArrayList<Location> locations = new ArrayList<>();
+                for (int i=0;i<list.length();i++){
+                    JSONObject jsonObject = list.getJSONObject(i);
+                    locations.add(new Location(jsonObject.getString("name"), Float.parseFloat(jsonObject.getString("db")), jsonObject.getString("mac")));
+                }
+                return locations;
+            } catch (JSONException | MalformedURLException | UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (inputStream != null){
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             return null;
         }
 
@@ -80,7 +114,7 @@ public class ServerListnerActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mDialog = new ProgressDialog(ServerListnerActivity.this);
-            mDialog.setTitle("Logging In");
+            mDialog.setTitle("Fetching data");
             mDialog.show();
         }
 
@@ -88,6 +122,11 @@ public class ServerListnerActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<Location> locationArrayList) {
             super.onPostExecute(locationArrayList);
             locationList = locationArrayList;
+            mAdapter = new LocationAdapter(locationList);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+            recyclerView.setLayoutManager(mLayoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(mAdapter);
             mDialog.dismiss();
         }
 
@@ -208,7 +247,6 @@ public class ServerListnerActivity extends AppCompatActivity {
     }
     private JSONObject downloadUrl(String myurl) throws IOException, JSONException{
         InputStream inputStream = null;
-
         try {
             URL url = new URL(myurl);
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();

@@ -6,10 +6,20 @@ package io.github.silencio_app.silencio;
 public class Location {
     private String name;
     private float db_level;
+    private String mac;
 
-    public Location(float db_level, String name) {
+    public Location(String name, float db_level, String mac ) {
         this.db_level = db_level;
+        this.mac = mac;
         this.name = name;
+    }
+
+    public String getMac() {
+        return mac;
+    }
+
+    public void setMac(String mac) {
+        this.mac = mac;
     }
 
     public float getDb_level() {
