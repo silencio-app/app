@@ -35,9 +35,9 @@ import java.net.URLEncoder;
 public class LoginActivity extends AppCompatActivity {
     private EditText username_et;
     private EditText password_et;
-    private static String USERNAME = "User name of user";
-    private static String LOGIN_URL = "http://35.163.237.103/silencio/login/";
-    private int RETURNED_LOGIN_FLAG;
+    private static final String USERNAME = "User name of user";
+    private static final String LOGIN_URL = "http://35.163.237.103/silencio/login/";
+    private static final String SIGNUP_URL = "http://35.163.237.103/silencio/signup/";
     private static final String PREFS_NAME = "SILENCIO_PREFS";
     private static final String PREFS_FIRST_START_KEY = "isFirstStart";
     private ProgressDialog mDialog;
