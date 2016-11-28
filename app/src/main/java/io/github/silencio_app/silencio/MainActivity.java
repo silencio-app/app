@@ -104,8 +104,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_home);
-
         amplitude = (TextView)findViewById(R.id.amp);
         play_pause_button = (Button)findViewById(R.id.play_pause_button);
         loud_image = (ImageView)findViewById(R.id.loud_image);
@@ -177,24 +175,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if (id == R.id.nav_home) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setCheckedItem(R.id.nav_home);
-        }
+        if (id == R.id.nav_home) {}
         else if (id == R.id.nav_map) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setCheckedItem(R.id.nav_map);
             Intent intent = new Intent(this, ServerListnerActivity.class);
             startActivity(intent);
-            finish();
         }
-        else if (id == R.id.nav_share) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setCheckedItem(R.id.nav_share);
-        }
+        else if (id == R.id.nav_share) {}
         else if (id == R.id.nav_logout) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setCheckedItem(R.id.nav_logout);
             CURRENT_LOGGED_USER = null;
             SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = settings.edit();

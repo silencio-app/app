@@ -50,7 +50,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
         holder.cardView.setCardBackgroundColor(Color.parseColor(colorList.get(position % colorList.size())));
         holder.location_name.setText(location.getName());
-        holder.location_db.setText(String.valueOf(location.getDb_level()));
+        String detail = "Sound level : " + String.valueOf(location.getDb_level()) + " dB";
+        holder.location_db.setText(detail);
     }
 
     @Override
