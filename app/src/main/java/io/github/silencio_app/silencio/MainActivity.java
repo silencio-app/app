@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.media.MediaRecorder;
-import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -76,9 +75,7 @@ public class MainActivity extends AppCompatActivity
     private Button play_pause_button;
     private ImageView loud_image;
     private WifiManager mWifiManager;
-    private DhcpInfo dhcpInfo;
     private TextView current_location;
-    private TextView current_user;
 
     private String current_ip;
     private final String FILENAME = "myFingerprinting";
@@ -106,13 +103,11 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         amplitude = (TextView)findViewById(R.id.amp);
         play_pause_button = (Button)findViewById(R.id.play_pause_button);
         loud_image = (ImageView)findViewById(R.id.loud_image);
         current_location = (TextView)findViewById(R.id.current_location);
         location_name = (EditText)findViewById(R.id.location_name);
-        current_user = (TextView) findViewById(R.id.disp_username);
 
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/Somatic-Rounded.otf");
         amplitude.setTypeface(custom_font);
@@ -136,8 +131,6 @@ public class MainActivity extends AppCompatActivity
         newT2.start();
 
         CURRENT_LOGGED_USER = getIntent().getExtras().getString("LOGGING USER");
-        current_user.setText(CURRENT_LOGGED_USER);
-
     }
     @Override
     public void onBackPressed() {
