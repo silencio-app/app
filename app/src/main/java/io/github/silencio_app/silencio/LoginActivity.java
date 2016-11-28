@@ -2,10 +2,12 @@ package io.github.silencio_app.silencio;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -258,6 +260,20 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void makeDialog(Context context, String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+        builder.show();
+    };
+
     private void handle_login(String code) {
 
         if (code.equals("1")){
@@ -266,11 +282,36 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-        else if(code.equals("0")){
-            // TODO Deal with Invalid http method or any other server failure
+        else if (code.equals("2")){
+            makeDialog(LoginActivity.this, "Login failed!", "The username : " + username + "does not exist.");
         }
-        else {
-            // TODO Deal with Invalid username password
+        else if (code.equals("3")){
+            makeDialog(LoginActivity.this, "Login failed!", "The password you entered is incorrect. Please correct the error.");
+        }
+        else if (code.equals("4")){
+            makeDialog(LoginActivity.this, "Login failed!", "Server error. Kindly try after some time");
+        }
+        else if (code.equals("5")){
+            final Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(USERNAME, username);
+            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
+                    .setTitle("Registration successful!")
+                    .setMessage("You will now be logged in with your selected username : " + username)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+            builder.show();
+        }
+        else if (code.equals("6")){
+            makeDialog(LoginActivity.this, "Registration failed!", "The username you entered already exists. Please select a different username.");
+        }
+        else if (code.equals("7")){
+            makeDialog(LoginActivity.this, "Registration failed!", "Server error. Kindly try after some time.");
         }
     }
 
