@@ -44,16 +44,11 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -389,31 +384,7 @@ public class MainActivity extends AppCompatActivity
                     makeSnackbar("You are not connected to any access point");
                 }
                 else{
-                    Enumeration<NetworkInterface> interfaces = null;
-                    try {
-                        interfaces = NetworkInterface.getNetworkInterfaces();
-                        while (interfaces.hasMoreElements()) {
-                            NetworkInterface networkInterface = interfaces.nextElement();
-                            if (networkInterface.isLoopback()) continue;
-                            for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
-                                InetAddress broadcast = interfaceAddress.getBroadcast();
-                                if (broadcast == null)
-                                    continue;
-                                String broadcastAddress = null;
-                                try {
-                                    if (broadcast.toString().substring(0,1).equals("/")) broadcastAddress = broadcast.toString().substring(1);
-                                    else broadcastAddress = broadcast.toString();
-                                }
-                                catch (NullPointerException e) {
-                                    e.printStackTrace();
-                                }
-                                Log.d(" BROADCAST ", broadcastAddress);
-                                current_ip = broadcastAddress;
-                            }
-                        }
-                    } catch (SocketException e) {
-                        e.printStackTrace();
-                    }
+                    current_ip = wifiInfo.getBSSID();
                 }
             }
             else{
