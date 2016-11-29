@@ -397,7 +397,7 @@ public class MainActivity extends AppCompatActivity
                     makeSnackbar("You are not connected to any access point");
                 }
                 else{
-                    current_ip = wifiInfo.getBSSID();
+                    current_ip = LocationMapper.get_location(wifiInfo.getBSSID());
                 }
             }
             else{
