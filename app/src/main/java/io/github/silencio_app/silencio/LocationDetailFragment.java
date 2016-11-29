@@ -48,29 +48,28 @@ public class LocationDetailFragment extends Fragment {
         Log.d("GRAPH", String.valueOf(graph_two));
         float [] records = passedData.getFloatArray("location_records");
         DataPoint[] dataPoints = new DataPoint[records.length+1];
-        if(records.length < 1){
-            dataPoints[0] = new DataPoint(0,0);
-        }
-        else{
-            for(int i=0;i<records.length;i++){
-                dataPoints[i] = new DataPoint(i, records[i]);
-            }
-        }
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3)
-        });
-        /*Log.d("GRAPH", String.valueOf(series[0]));*/
+
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
         graph_two.addSeries(series);
         Viewport viewport = graph_two.getViewport();
         viewport.setYAxisBoundsManual(true);
-        viewport.setMinX(1.0);
+        viewport.setXAxisBoundsManual(true);
+        viewport.setMinX(0);
         viewport.setMinY(0);  // min value is 0
         viewport.setMaxY(100);  // max value is 32768
         viewport.setMaxX(100);  // 10 units frame
-        viewport.setScalable(true); // auto scroll to right
 
+        /*series.appendData(new DataPoint(lastX++, amp_val), true, 100);*/
+
+        if(records.length < 1){
+            series.appendData(new DataPoint(0, 0), true, 100);
+        }
+        else{
+            for(int i=0;i<records.length;i++){
+                Log.d("UAHSDASDJ", String.valueOf(records[i]));
+                series.appendData(new DataPoint(i, records[i]), true, 100);
+            }
+        }
         return rootView;
     }
 }
