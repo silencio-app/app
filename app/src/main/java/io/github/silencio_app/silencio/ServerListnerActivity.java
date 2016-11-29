@@ -194,7 +194,23 @@ public class ServerListnerActivity extends AppCompatActivity {
             JSONObject jsonObject = null;
             try {
                 jsonObject = list.getJSONObject(i);
-                locations.add(new Location(jsonObject.getString("name"), Float.parseFloat(jsonObject.getString("db")), jsonObject.getString("mac")));
+                String record_array_string = jsonObject.get("records").toString();
+                record_array_string = record_array_string.replaceAll("\\[", "").replaceAll("\\]", "");
+                String [] array = record_array_string.split(",");
+                Log.d("MSG", "**************************"+array[0]+"*******"+record_array_string);
+                float[] records;
+                if(record_array_string.length() <= 6){
+                    records = new float[0];
+                }
+                else{
+                    records = new float[array.length];
+                    for(int j=0;j<array.length;j++){
+                        records[j] = Float.parseFloat(array[j]);
+                    }
+                }
+                Location location = new Location(jsonObject.getString("name"), Float.parseFloat(jsonObject.getString("db")), jsonObject.getString("mac"));
+                location.setRecords(records);
+                locations.add(location);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

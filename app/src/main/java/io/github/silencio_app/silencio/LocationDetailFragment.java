@@ -3,6 +3,7 @@ package io.github.silencio_app.silencio;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ public class LocationDetailFragment extends Fragment {
 
         vp_location_name.setText(passedData.getString("location_name"));
         vp_location_db.setText(passedData.getString("location_db"));
+        Log.d("ASMKBDSABDA", String.valueOf(passedData.getFloatArray("location_records")));
 
         return rootView;
     }

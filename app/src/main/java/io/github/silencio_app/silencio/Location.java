@@ -10,8 +10,21 @@ public class Location implements Parcelable{
     private String name;
     private float db_level;
     private String mac;
+    private float [] records;
 
-    public Location(String name, float db_level, String mac ) {
+    public static Creator<Location> getCREATOR() {
+        return CREATOR;
+    }
+
+    public float[] getRecords() {
+        return records;
+    }
+
+    public void setRecords(float[] records) {
+        this.records = records;
+    }
+
+    public Location(String name, float db_level, String mac) {
         this.db_level = db_level;
         this.mac = mac;
         this.name = name;

@@ -98,7 +98,7 @@ public class DetailedLocationActivity extends FragmentActivity {
             args.putString("location_name", location.getName());
             args.putString("location_db", String.valueOf(location.getDb_level()));
             args.putString("location_mac", location.getMac());
-
+            args.putFloatArray("location_records", location.getRecords());
             locationDetailFragment.setArguments(args);
             return locationDetailFragment;
             /*return new ScreenSlidePageFragment();*/
