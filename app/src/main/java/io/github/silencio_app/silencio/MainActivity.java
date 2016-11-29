@@ -178,7 +178,6 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, ServerListnerActivity.class);
             startActivity(intent);
         }
-        else if (id == R.id.nav_share) {}
         else if (id == R.id.nav_logout) {
             CURRENT_LOGGED_USER = null;
             SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
