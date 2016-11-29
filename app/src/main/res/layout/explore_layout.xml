@@ -37,15 +37,15 @@
                 android:textColor="@color/colorWhite"
                 android:textStyle="bold"
                 android:layout_marginTop="20dp"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:layout_marginStart="20dp"/>
             <Button
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:id="@+id/play_pause_button"
-                android:layout_marginTop="20dp"
+                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="30dp"
                 android:onClick="play_pause_handler"
                 android:background="@drawable/ic_play_circle_filled_white_24dp"/>
 
@@ -55,7 +55,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Location :"
                 android:id="@+id/location_label"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:textStyle="bold"
                 android:textColor="@color/colorWhite"
                 android:layout_marginStart="20dp"
@@ -69,10 +69,10 @@
                 android:textColor="@color/colorWhite"
                 android:textStyle="bold"
                 android:textSize="20sp"
-                android:layout_alignBottom="@+id/location_label"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="20dp"
-                android:layout_toRightOf="@+id/location_label"/>
-            <Button
+                android:layout_below="@+id/location_label"/>
+            <!--<Button
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:background="@drawable/ic_menu_camera"
@@ -87,7 +87,7 @@
                 android:id="@+id/location_name"
                 android:layout_below="@+id/location_label"
                 android:layout_marginRight="20dp"
-                android:layout_alignStart="@+id/current_location" />
+                android:layout_alignStart="@+id/current_location" />-->
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"

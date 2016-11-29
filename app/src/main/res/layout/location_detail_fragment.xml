@@ -1,31 +1,75 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#34495e">
 
-    <TextView
-        android:textAlignment="center"
-        android:text="HELLO"
-        android:id="@+id/vp_location_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="106dp"
-        android:layout_marginTop="20dp" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/explore_main_card">
 
-    <TextView
-        android:text="Medium Text"
-        android:id="@+id/vp_location_mac"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layout_alignStart="@+id/vp_location_name" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="125dp"
+            android:background="@drawable/explore_card_header">
 
-    <TextView
-        android:text="Medium Text"
-        android:id="@+id/vp_location_db"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:layout_alignStart="@+id/vp_location_name" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Location"
+                android:id="@+id/vp_location_name"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:textSize="20sp"
+                android:layout_marginStart="20dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Last reported sound level :"
+                android:id="@+id/loc_label"
+                android:layout_marginTop="25dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorWhite"
+                android:layout_marginStart="20dp"
+                android:layout_below="@+id/vp_location_name"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="xx dB"
+                android:layout_alignBaseline="@id/loc_label"
+                android:id="@+id/vp_location_db"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_alignBottom="@id/loc_label"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@id/loc_label"/>
+        </RelativeLayout>
+        <com.jjoe64.graphview.GraphView
+            android:layout_width="match_parent"
+            android:layout_height="250dip"
+            android:id="@+id/graph_two"
+            android:background="#f1eeee"
+            android:visibility="invisible"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"/>
+    </LinearLayout>
 </RelativeLayout>
