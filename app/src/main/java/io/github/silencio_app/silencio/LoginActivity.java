@@ -66,7 +66,6 @@ public class LoginActivity extends AppCompatActivity {
         }
         else {
             checkMicPermission();
-            checkStoragePermission();
             String current_user = settings.getString(PREFS_CURRENT_USER, null);
             if (current_user != null) {
                 username = current_user;
@@ -83,9 +82,6 @@ public class LoginActivity extends AppCompatActivity {
     private void checkMicPermission() {
         String permission = Manifest.permission.RECORD_AUDIO;
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                makeSnackbar("Allow microphone permission");
-            }
             ActivityCompat.requestPermissions(this, new String[]{permission}, MIC_PERMISSION_REQUEST_CODE);
         }
     }
@@ -93,9 +89,6 @@ public class LoginActivity extends AppCompatActivity {
     private void checkStoragePermission() {
         String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                makeSnackbar("Allow storage permission");
-            }
             ActivityCompat.requestPermissions(this, new String[]{permission}, STORAGE_PERMISSION_REQUEST_CODE);
         }
     }
@@ -104,18 +97,36 @@ public class LoginActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case MIC_PERMISSION_REQUEST_CODE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {}
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkStoragePermission();
+                }
                 else {
-                    makeSnackbar("Cannot continue without microphone access");
+                    makePermissionCancelDialog();
                 }
             }
             case STORAGE_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {}
                 else {
-                    makeSnackbar("Cannot continue without storage access");
+                    makePermissionCancelDialog();
                 }
             }
         }
+    }
+
+    public void makePermissionCancelDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
+                .setTitle("And so it ends....")
+                .setMessage("We are sorry to inform you that we cannot continue without this permission. Press OK to exit the application.")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                        System.exit(0);
+                    }
+                });
+        builder.show();
     }
 
     private boolean validateForm() {
