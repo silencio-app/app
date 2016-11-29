@@ -6,13 +6,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_exit">Exit</string>
 
-    <string name="start">START</string>
-    <string name="stop">STOP</string>
     <string name="silencio_app_logo">Silencio app logo</string>
     <string name="silencio">Silencio</string>
-
-    <string name="explore_world">Explore World</string>
-    <string name="direct_teller">Direct Teller</string>
 
     <string name="slide1title">Welcome</string>
     <string name="slide1description">Silencio enables you to view the noise levels around you in real-time.</string>
