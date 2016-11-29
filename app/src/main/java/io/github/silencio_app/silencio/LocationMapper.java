@@ -1,5 +1,6 @@
 package io.github.silencio_app.silencio;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -7,6 +8,7 @@ import java.util.HashMap;
  */
 public class LocationMapper {
     public static HashMap<String, String> locationsMap = new HashMap<>();
+    public static ArrayList<String> categoryList = new ArrayList<>();
     static {
         locationsMap.put("c4:0a:cb:2d:84:e8", "SC Lab 203");
         locationsMap.put("c4:0a:cb:5c:03:28", "SC Sports Room");
@@ -76,6 +78,13 @@ public class LocationMapper {
         locationsMap.put("c4:0a:cb:2d:ce:88", "Academic Block B Wing First Floor");
         locationsMap.put("c4:0a:cb:2d:c6:08", "Academic Block A Wing First Floor");
         locationsMap.put("c4:0a:cb:2d:83:e8", "Academic Block B Wing First Floor");
+
+        categoryList.add("Boys Hostel");
+        categoryList.add("Girls Hostel");
+        categoryList.add("Academic Building");
+        categoryList.add("Library Building");
+        categoryList.add("Student Center");
+        categoryList.add("Labs");
     }
 
     public static String get_location(String mac){
@@ -86,5 +95,6 @@ public class LocationMapper {
             return "Anonymous";
         }
     }
+
 
 }
