@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * Created by vipin on 29/11/16.
  */
 public class DetailedLocationActivity extends FragmentActivity {
-    private ArrayList<Location> locationList;
+    private ArrayList<Location> locationList, filteredList;
     private ViewPager mPager;
     private int open_index;
     private PagerAdapter mPagerAdapter;
@@ -26,18 +26,52 @@ public class DetailedLocationActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detailed_location_activity);
+
+        open_index = getIntent().getExtras().getInt("open_index");
+        String regex = "";
+        switch (open_index){
+            case 0:
+                regex = "Boys";
+                break;
+            case 1:
+                regex = "Girls";
+                break;
+            case 2:
+                regex = "Academic";
+                break;
+            case 3:
+                regex = "Library";
+                break;
+            case 4:
+                regex = "SC";
+                break;
+            case 5:
+                regex = "Lab";
+                break;
+            default:
+                // nothing
+        }
         locationList = ServerListnerActivity.locationList;
+        filteredList = filter_objects(regex);
+
         // Instantiate a ViewPager and a PagerAdapter.
 
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
-        open_index = getIntent().getExtras().getInt("open_index");
-        mPager.setCurrentItem(open_index, true);
 
         mPagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTitle);
         mPagerTabStrip.setTextColor(Color.parseColor("#ffffff"));
         mPagerTabStrip.setTabIndicatorColor(Color.parseColor("#ffffff"));
+    }
+    public ArrayList<Location> filter_objects(String regex){
+        ArrayList<Location> arrayList = new ArrayList<>();
+        for(Location obj:locationList){
+            if(obj.getName().contains(regex)){
+                arrayList.add(obj);
+            }
+        }
+        return arrayList;
     }
 
     @Override
@@ -58,7 +92,7 @@ public class DetailedLocationActivity extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            Location location = locationList.get(position);
+            Location location = filteredList.get(position);
             LocationDetailFragment locationDetailFragment = new LocationDetailFragment();
             Bundle args = new Bundle();
             args.putString("location_name", location.getName());
@@ -73,7 +107,7 @@ public class DetailedLocationActivity extends FragmentActivity {
 
         @Override
         public int getCount() {
-            return locationList.size();
+            return filteredList.size();
         }
 
         @Override

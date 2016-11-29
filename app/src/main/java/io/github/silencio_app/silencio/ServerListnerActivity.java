@@ -60,6 +60,7 @@ public class ServerListnerActivity extends AppCompatActivity {
         categoryList.add("Academic Building");
         categoryList.add("Library Building");
         categoryList.add("Student Center");
+        categoryList.add("Labs");
 
         colorList = new ArrayList<>();
         colorList.add("#9b59b6");
