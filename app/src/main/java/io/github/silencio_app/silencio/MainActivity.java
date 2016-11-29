@@ -401,7 +401,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             else{
-                makeSnackbar("Wifi Not Enabled");
+                makeSnackbar("Wifi not enabled");
             }
         }
         @Override
@@ -430,7 +430,19 @@ public class MainActivity extends AppCompatActivity
                                         "&db_level=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getAvg_db()), "UTF-8") +
                                         "&start_time=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getStart()), "UTF-8") +
                                         "&end_time=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getEnd()), "UTF-8");
-                                new PostTask().execute(encodedUrl);
+                                mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                                if(mWifiManager.isWifiEnabled()){
+                                    WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                                    if (wifiInfo.getNetworkId() == -1){
+                                        makeSnackbar("You are not connected to any access point");
+                                    }
+                                    else{
+                                        new PostTask().execute(encodedUrl);
+                                    }
+                                }
+                                else{
+                                    makeSnackbar("WiFi not enabled");
+                                }
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();
                             }

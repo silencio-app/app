@@ -1,11 +1,13 @@
 package io.github.silencio_app.silencio;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ public class DetailedLocationActivity extends FragmentActivity {
     private ViewPager mPager;
     private int open_index;
     private PagerAdapter mPagerAdapter;
+    private PagerTabStrip mPagerTabStrip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,10 @@ public class DetailedLocationActivity extends FragmentActivity {
         mPager.setAdapter(mPagerAdapter);
         open_index = getIntent().getExtras().getInt("open_index");
         mPager.setCurrentItem(open_index, true);
+
+        mPagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTitle);
+        mPagerTabStrip.setTextColor(Color.parseColor("#ffffff"));
+        mPagerTabStrip.setTabIndicatorColor(Color.parseColor("#ffffff"));
     }
 
     @Override

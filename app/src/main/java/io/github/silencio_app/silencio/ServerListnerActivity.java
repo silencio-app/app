@@ -1,12 +1,14 @@
 package io.github.silencio_app.silencio;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.os.Parcelable;
-import android.os.PersistableBundle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,16 +29,11 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.net.CookieManager;
-import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class ServerListnerActivity extends AppCompatActivity {
     private TextView data;
@@ -49,6 +46,7 @@ public class ServerListnerActivity extends AppCompatActivity {
     private static final String PRE_FETCHED_LIST = "Pre Fetched Location List";
     private String location_json_string;
     ArrayList<String> colorList;
+    private WifiManager mWifiManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +69,20 @@ public class ServerListnerActivity extends AppCompatActivity {
         colorList.add("#d35400");
         colorList.add("#f39c12");
 
-
-
-        // TODO GET LIST OF LOCATION HERE
         if (savedInstanceState == null){
-            new GetLocationTask().execute();
+            mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            if(mWifiManager.isWifiEnabled()){
+                WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                if (wifiInfo.getNetworkId() == -1){
+                    makeSnackbar("You are not connected to any access point");
+                }
+                else{
+                    new GetLocationTask().execute();
+                }
+            }
+            else{
+                makeSnackbar("WiFi not enabled");
+            }
         }
         else{
             location_json_string = savedInstanceState.getString(PRE_FETCHED_LIST, null);
@@ -84,6 +91,15 @@ public class ServerListnerActivity extends AppCompatActivity {
             recyclerView.setAdapter(mAdapter);
         }
 
+    }
+
+    public void makeSnackbar(String snackbarText) {
+        Snackbar.make(getWindow().getDecorView().getRootView(), snackbarText, Snackbar.LENGTH_LONG)
+                .setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {}
+                })
+                .show();
     }
 
     @Override
@@ -110,7 +126,7 @@ public class ServerListnerActivity extends AppCompatActivity {
 
                 Reader reader = null;
                 reader = new InputStreamReader(inputStream, "UTF-8");
-                char[] buffer = new char[1000];
+                char[] buffer = new char[10000];
                 reader.read(buffer);
                 String ans =  new String(buffer);
                 Log.d("RESPONSE CODE", "******************* "+response);

@@ -1,12 +1,20 @@
 package io.github.silencio_app.silencio;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -38,6 +46,9 @@ public class LoginActivity extends AppCompatActivity {
     public static final String PREFS_CURRENT_USER = "currentUser";
     private ProgressDialog mDialog;
     private String username;
+    private WifiManager mWifiManager;
+    private static final int MIC_PERMISSION_REQUEST_CODE = 1;
+    private static final int STORAGE_PERMISSION_REQUEST_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
         else {
+            checkMicPermission();
             String current_user = settings.getString(PREFS_CURRENT_USER, null);
             if (current_user != null) {
                 username = current_user;
@@ -65,6 +77,56 @@ public class LoginActivity extends AppCompatActivity {
         }
         username_et = (EditText)findViewById(R.id.username_et);
         password_et = (EditText)findViewById(R.id.password_et);
+    }
+
+    private void checkMicPermission() {
+        String permission = Manifest.permission.RECORD_AUDIO;
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, MIC_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    private void checkStoragePermission() {
+        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, STORAGE_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MIC_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkStoragePermission();
+                }
+                else {
+                    makePermissionCancelDialog();
+                }
+            }
+            case STORAGE_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {}
+                else {
+                    makePermissionCancelDialog();
+                }
+            }
+        }
+    }
+
+    public void makePermissionCancelDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
+                .setTitle("And so it ends....")
+                .setMessage("We are sorry to inform you that we cannot continue without this permission. Press OK to exit the application.")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                        System.exit(0);
+                    }
+                });
+        builder.show();
     }
 
     private boolean validateForm() {
@@ -92,6 +154,15 @@ public class LoginActivity extends AppCompatActivity {
         inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
+    public void makeSnackbar(String snackbarText) {
+        Snackbar.make(getWindow().getDecorView().getRootView(), snackbarText, Snackbar.LENGTH_LONG)
+                .setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {}
+                })
+                .show();
+    }
+
     public void login(View view){
         hideSoftKeyboard();
         username = username_et.getText().toString();
@@ -100,7 +171,19 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
                         "&password=" + URLEncoder.encode(password, "UTF-8");
-                new LoginTask().execute(encodedUrl);
+                mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                if(mWifiManager.isWifiEnabled()){
+                    WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                    if (wifiInfo.getNetworkId() == -1){
+                        makeSnackbar("You are not connected to any access point");
+                    }
+                    else{
+                        new LoginTask().execute(encodedUrl);
+                    }
+                }
+                else{
+                    makeSnackbar("WiFi not enabled");
+                }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -190,7 +273,19 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 String encodedUrl = "&username=" + URLEncoder.encode(username, "UTF-8") +
                         "&password=" + URLEncoder.encode(password, "UTF-8");
-                new SignupTask().execute(encodedUrl);
+                mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                if(mWifiManager.isWifiEnabled()){
+                    WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                    if (wifiInfo.getNetworkId() == -1){
+                        makeSnackbar("You are not connected to any access point");
+                    }
+                    else{
+                        new SignupTask().execute(encodedUrl);
+                    }
+                }
+                else{
+                    makeSnackbar("WiFi not enabled");
+                }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
