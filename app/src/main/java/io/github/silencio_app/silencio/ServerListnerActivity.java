@@ -40,9 +40,11 @@ public class ServerListnerActivity extends AppCompatActivity {
     private static final String POST_URL = "http://35.163.237.103/silencio/post/";
     private static final String GET_LOCATIONS_URL = "http://35.163.237.103/silencio/locations/";
     public static ArrayList<Location> locationList = new ArrayList<>();
+    public static ArrayList<String> categoryList = new ArrayList<>();
     private ProgressDialog mDialog;
     private RecyclerView recyclerView;
     public static LocationAdapter mAdapter;
+    public static CategoryAdapter cAdapter;
     private static final String PRE_FETCHED_LIST = "Pre Fetched Location List";
     private String location_json_string;
     ArrayList<String> colorList;
@@ -53,10 +55,9 @@ public class ServerListnerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_listner);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        categoryList.add("Hostel");
+        categoryList.add("Acads");
+
         colorList = new ArrayList<>();
         colorList.add("#9b59b6");
         colorList.add("#f1c40f");
@@ -64,10 +65,17 @@ public class ServerListnerActivity extends AppCompatActivity {
         colorList.add("#3498d8");
         colorList.add("#e74c3c");
         colorList.add("#ec7e22");
-
         colorList.add("#1abc9c");
         colorList.add("#d35400");
         colorList.add("#f39c12");
+
+        cAdapter = new CategoryAdapter(categoryList, colorList);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(cAdapter);
+
 
         if (savedInstanceState == null){
             mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -87,8 +95,8 @@ public class ServerListnerActivity extends AppCompatActivity {
         else{
             location_json_string = savedInstanceState.getString(PRE_FETCHED_LIST, null);
             json_to_list();
-            mAdapter = new LocationAdapter(locationList, colorList);
-            recyclerView.setAdapter(mAdapter);
+            /*mAdapter = new LocationAdapter(locationList, colorList);
+            recyclerView.setAdapter(mAdapter);*/
         }
 
     }
@@ -163,8 +171,9 @@ public class ServerListnerActivity extends AppCompatActivity {
             super.onPostExecute(s);
             location_json_string = s;
             json_to_list();
-            mAdapter = new LocationAdapter(locationList, colorList);
-            recyclerView.setAdapter(mAdapter);
+
+            /*mAdapter = new LocationAdapter(locationList, colorList);
+            recyclerView.setAdapter(mAdapter);*/
             mDialog.dismiss();
         }
     }
