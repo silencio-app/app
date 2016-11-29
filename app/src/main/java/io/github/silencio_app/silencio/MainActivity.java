@@ -196,6 +196,10 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             finish();
         }
+        else if (id == R.id.nav_opensource) {
+            Intent intent = new Intent(this, OpenSourceLicenses.class);
+            startActivity(intent);
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

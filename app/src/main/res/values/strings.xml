@@ -20,4 +20,7 @@
 
     <string name="slide4title">Let\'s get started!</string>
     <string name="slide4description">We require access to your device\'s microphone in order to record noise levels. Also we require permission to use the storage on your device to enable data logging for upload to our servers. Kindly grant these permissions when prompted for the same.</string>
+
+    <string name="opensource">This project uses the following open source libraries - \n\nGraphView - https://github.com/jjoe64/GraphView\nAndroid Graph Library for creating zoomable and scrollable line and bar graphs.\nApache License v2.0\n\nAppIntro - https://github.com/paolorotolo/AppIntro\nMake a cool intro for your Android app.\nApache License v2.0\n\nMaterialEditText - https://github.com/rengwuxian/MaterialEditText\nEditText in Material Design.\nApache License v2.0\n\nAndroid-Flat-Button - https://github.com/hoang8f/android-flat-button\nFButton - a flat button library for Android.\nApache License v2.0\n
+    </string>
 </resources>
