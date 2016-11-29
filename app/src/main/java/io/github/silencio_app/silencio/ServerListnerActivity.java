@@ -126,7 +126,7 @@ public class ServerListnerActivity extends AppCompatActivity {
 
                 Reader reader = null;
                 reader = new InputStreamReader(inputStream, "UTF-8");
-                char[] buffer = new char[1000];
+                char[] buffer = new char[10000];
                 reader.read(buffer);
                 String ans =  new String(buffer);
                 Log.d("RESPONSE CODE", "******************* "+response);
