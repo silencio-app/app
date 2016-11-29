@@ -113,7 +113,7 @@ public class DetailedLocationActivity extends FragmentActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             if (position >= 0){
-                return "TASK "+ (position + 1);
+                return filteredList.get(position).getName();
             }
             return null;
         }
