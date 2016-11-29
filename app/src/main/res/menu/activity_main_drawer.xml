@@ -10,10 +10,10 @@
             android:id="@+id/nav_map"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Sound map" />
-        <item
+        <!--<item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_menu_share"
-            android:title="Spread the word" />
+            android:title="Spread the word" />-->
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_exit_to_app_black_24dp"
