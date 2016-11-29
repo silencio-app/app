@@ -26,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity
 
     private String current_ip;
     private final String FILENAME = "myFingerprinting";
-    private EditText location_name;
+    private TextView location_name;
     private boolean canR, canW;
     private static final String DATETIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
@@ -87,7 +86,6 @@ public class MainActivity extends AppCompatActivity
     private static final String POST_URL = "http://35.163.237.103/silencio/post/";
     private DateFormat dateFormat;
     private String CURRENT_LOGGED_USER;
-    private static String CURRENT_LOCATION = "Hostel";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity
         play_pause_button = (Button)findViewById(R.id.play_pause_button);
         loud_image = (ImageView)findViewById(R.id.loud_image);
         current_location = (TextView)findViewById(R.id.current_location);
-        location_name = (EditText)findViewById(R.id.location_name);
+        location_name = (TextView)findViewById(R.id.location_name);
 
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/Somatic-Rounded.otf");
         amplitude.setTypeface(custom_font);
