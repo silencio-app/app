@@ -396,6 +396,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 else{
                     current_ip = LocationMapper.get_location(wifiInfo.getBSSID());
+                    Log.d(" MSG ", current_ip);
                 }
             }
             else{
@@ -422,27 +423,29 @@ public class MainActivity extends AppCompatActivity
                             String end_date = record.getDate();
                             av_db /= 100;
                             NoiseRecordBundle noiseRecordBundle = new NoiseRecordBundle(record.getPlace(), av_db, start_date, end_date);
-                            try {
-                                String encodedUrl = "&username=" + URLEncoder.encode(CURRENT_LOGGED_USER, "UTF-8") +
-                                        "&location=" + URLEncoder.encode(noiseRecordBundle.getPlace(), "UTF-8") +
-                                        "&db_level=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getAvg_db()), "UTF-8") +
-                                        "&start_time=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getStart()), "UTF-8") +
-                                        "&end_time=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getEnd()), "UTF-8");
-                                mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                                if(mWifiManager.isWifiEnabled()){
-                                    WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-                                    if (wifiInfo.getNetworkId() == -1){
-                                        makeSnackbar("You are not connected to any access point");
+                            if (!noiseRecordBundle.getPlace().equals("Anonymous")){
+                                try {
+                                    String encodedUrl = "&username=" + URLEncoder.encode(CURRENT_LOGGED_USER, "UTF-8") +
+                                            "&location=" + URLEncoder.encode(noiseRecordBundle.getPlace(), "UTF-8") +
+                                            "&db_level=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getAvg_db()), "UTF-8") +
+                                            "&start_time=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getStart()), "UTF-8") +
+                                            "&end_time=" + URLEncoder.encode(String.valueOf(noiseRecordBundle.getEnd()), "UTF-8");
+                                    mWifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                                    if(mWifiManager.isWifiEnabled()){
+                                        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                                        if (wifiInfo.getNetworkId() == -1){
+                                            makeSnackbar("You are not connected to any access point");
+                                        }
+                                        else{
+                                            new PostTask().execute(encodedUrl);
+                                        }
                                     }
                                     else{
-                                        new PostTask().execute(encodedUrl);
+                                        makeSnackbar("WiFi not enabled");
                                     }
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
                                 }
-                                else{
-                                    makeSnackbar("WiFi not enabled");
-                                }
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
                             }
                         }
                         get_gateway_ip();
@@ -590,7 +593,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         series.appendData(new DataPoint(lastX++, amp_val), true, 100);
 
-                        NoiseRecord noiseRecord = new NoiseRecord("Hostel", (float)amp_val, dateFormat.format(new Date()));
+                        NoiseRecord noiseRecord = new NoiseRecord(current_ip, (float)amp_val, dateFormat.format(new Date()));
                         recordQueue.add(noiseRecord);
                     }
                 });
