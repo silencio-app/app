@@ -24,5 +24,5 @@
     <string name="slide3description">The noise level information from the Silencio application is co-related with your location in the IIIT Delhi campus and uploaded to our server. This enables us to provide you a real-time view of the noise levels anywhere in campus!</string>
 
     <string name="slide4title">Let\'s get started!</string>
-    <string name="slide4description">Press DONE to begin.</string>
+    <string name="slide4description">We require access to your device\'s microphone in order to record noise levels. Also we require permission to use the storage on your device to enable data logging for upload to our servers. Kindly grant these permissions when prompted for the same.</string>
 </resources>

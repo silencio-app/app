@@ -1,15 +1,20 @@
 package io.github.silencio_app.silencio;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -42,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog mDialog;
     private String username;
     private WifiManager mWifiManager;
+    private static final int MIC_PERMISSION_REQUEST_CODE = 1;
+    private static final int STORAGE_PERMISSION_REQUEST_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,8 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
         else {
+            checkMicPermission();
+            checkStoragePermission();
             String current_user = settings.getString(PREFS_CURRENT_USER, null);
             if (current_user != null) {
                 username = current_user;
@@ -69,6 +78,44 @@ public class LoginActivity extends AppCompatActivity {
         }
         username_et = (EditText)findViewById(R.id.username_et);
         password_et = (EditText)findViewById(R.id.password_et);
+    }
+
+    private void checkMicPermission() {
+        String permission = Manifest.permission.RECORD_AUDIO;
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                makeSnackbar("Allow microphone permission");
+            }
+            ActivityCompat.requestPermissions(this, new String[]{permission}, MIC_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    private void checkStoragePermission() {
+        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                makeSnackbar("Allow storage permission");
+            }
+            ActivityCompat.requestPermissions(this, new String[]{permission}, STORAGE_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MIC_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {}
+                else {
+                    makeSnackbar("Cannot continue without microphone access");
+                }
+            }
+            case STORAGE_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {}
+                else {
+                    makeSnackbar("Cannot continue without storage access");
+                }
+            }
+        }
     }
 
     private boolean validateForm() {
