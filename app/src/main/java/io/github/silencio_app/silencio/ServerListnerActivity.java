@@ -135,10 +135,15 @@ public class ServerListnerActivity extends AppCompatActivity {
                 int response = connection.getResponseCode();
                 inputStream = connection.getInputStream();
 
-                Reader reader = null;
-                reader = new InputStreamReader(inputStream, "UTF-8");
-                char[] buffer = new char[10000];
-                reader.read(buffer);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                String line;
+                String buffer = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    buffer += line;
+                    buffer += "\n";
+                }
+                connection.disconnect();
+                bufferedReader.close();
                 String ans =  new String(buffer);
                 Log.d("RESPONSE CODE", "******************* "+response);
                 Log.d("LETS SEE", ans);
