@@ -30,7 +30,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
         public MyViewHolder(View view) {
             super(view);
             location_name = (TextView) view.findViewById(R.id.location_name);
-            location_db = (TextView) view.findViewById(R.id.location_db);
+            /*location_db = (TextView) view.findViewById(R.id.location_db);*/
             cardView = (CardView) view.findViewById(R.id.card_view);
 
         }

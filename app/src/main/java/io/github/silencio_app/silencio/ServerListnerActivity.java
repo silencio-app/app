@@ -55,8 +55,11 @@ public class ServerListnerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_listner);
 
-        categoryList.add("Hostel");
-        categoryList.add("Acads");
+        categoryList.add("Boys Hostel");
+        categoryList.add("Girls Hostel");
+        categoryList.add("Academic Building");
+        categoryList.add("Library Building");
+        categoryList.add("Student Center");
 
         colorList = new ArrayList<>();
         colorList.add("#9b59b6");
