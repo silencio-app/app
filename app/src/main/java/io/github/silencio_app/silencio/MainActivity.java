@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -124,6 +125,9 @@ public class MainActivity extends AppCompatActivity
         viewport.setMaxY(100);  // max value is 32768
         viewport.setMaxX(100);  // 10 units frame
         viewport.setScalable(true); // auto scroll to right
+        GridLabelRenderer gridLabel = graph.getGridLabelRenderer();
+        gridLabel.setHorizontalAxisTitle("Partition Intervals");
+        gridLabel.setVerticalAxisTitle("db Levels");
 
         recordQueue = new LinkedList<NoiseRecord>();
         dateFormat = new SimpleDateFormat(DATETIME_FORMAT);
@@ -296,7 +300,7 @@ public class MainActivity extends AppCompatActivity
 
                 Thread newT = new Thread(new AudioListener());  // New Thread is created to handle the amplitude fetching and plotting graph
                 newT.start();
-                showGraph(view);
+                /*showGraph(view);*/
 
             }
             catch (IOException e){
@@ -313,7 +317,7 @@ public class MainActivity extends AppCompatActivity
             mediaRecorder.release();
             mediaRecorder = null;
             recording_flag = false; //reset the flag
-            hideGraph(view);
+            /*hideGraph(view);*/
         }
         else{
             Log.d(MSG, "================== NO MIC LOCKED ================");

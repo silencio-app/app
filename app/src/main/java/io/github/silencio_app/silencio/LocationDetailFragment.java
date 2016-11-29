@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -58,6 +59,9 @@ public class LocationDetailFragment extends Fragment {
         viewport.setMinY(0);  // min value is 0
         viewport.setMaxY(100);  // max value is 32768
         viewport.setMaxX(100);  // 10 units frame
+        GridLabelRenderer gridLabel = graph_two.getGridLabelRenderer();
+        gridLabel.setHorizontalAxisTitle("Intervals");
+        gridLabel.setVerticalAxisTitle("db Levels");
 
         /*series.appendData(new DataPoint(lastX++, amp_val), true, 100);*/
 
