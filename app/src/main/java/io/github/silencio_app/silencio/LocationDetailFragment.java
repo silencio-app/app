@@ -32,11 +32,9 @@ public class LocationDetailFragment extends Fragment {
                 R.layout.location_detail_fragment, container, false);
 
         vp_location_name = (TextView) rootView.findViewById(R.id.vp_location_name);
-        vp_location_mac = (TextView) rootView.findViewById(R.id.vp_location_mac);
         vp_location_db = (TextView) rootView.findViewById(R.id.vp_location_db);
 
         vp_location_name.setText(passedData.getString("location_name"));
-        vp_location_mac.setText(passedData.getString("location_mac"));
         vp_location_db.setText(passedData.getString("location_db"));
 
         return rootView;
