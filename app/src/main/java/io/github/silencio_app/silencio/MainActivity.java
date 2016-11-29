@@ -20,6 +20,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -177,6 +178,13 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.nav_map) {
             Intent intent = new Intent(this, ServerListnerActivity.class);
             startActivity(intent);
+        }
+        else if (id == R.id.nav_share) {
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+            sharingIntent.setType("text/html");
+            String htmlText = "Hey there! I'm using this awesome app called Silencio, check it out at <a href=\"https://github.com/silencio-app/app\">https://github.com/silencio-app/silencio</a>";
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, Html.fromHtml(htmlText));
+            startActivity(Intent.createChooser(sharingIntent,"Share using"));
         }
         else if (id == R.id.nav_logout) {
             CURRENT_LOGGED_USER = null;
